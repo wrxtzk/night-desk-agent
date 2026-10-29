@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "32px 16px", fontFamily: "system-ui, sans-serif" }}>
       <h1 style={{ fontSize: 28, letterSpacing: -0.5 }}>{shop.name}</h1>
-      <p style={{ color: "#5d5d62" }}>Minded overnight by Night Desk. Sandbox test shop: ask about {shop.sells} in any language. <a href="/api/ledger">Ledger (JSON)</a></p>
+      <p style={{ color: "#5d5d62" }}>Minded overnight by Night Desk. A fictional demo shop on the PayPal sandbox: ask about {shop.sells} in any language. <a href="/api/ledger">Ledger (JSON)</a></p>
       {status && <p style={{ background: "#eef56a", padding: "8px 12px", borderRadius: 8 }}>{status}</p>}
       <div style={{ display: "grid", gap: 12, margin: "24px 0" }}>
         {lines.map((l, i) => (

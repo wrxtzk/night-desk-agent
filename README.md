@@ -4,7 +4,7 @@
 
 Night Desk is for solo sellers who sell abroad: handmade goods, ceramics, used cameras, indie design. It runs the shop through the seller's own PayPal account (sandbox): it answers buyers in their language, quotes in their currency, creates PayPal orders, refunds when a parcel is late, attaches tracking, and writes the reason for every money movement. The owner's house rules are enforced in code before any money moves, so a buyer who talks the model into something still can't get past them.
 
-The demo shop is **Munbang Stationery**, a Korean stationery shop in Seoul selling to the US and Japan. To run a different shop, edit `src/lib/shop.ts` and `src/lib/catalog.ts`.
+The demo shop, **Munbang Stationery**, is fictional: a made-up Korean stationery shop in Seoul selling to the US and Japan, with a made-up catalog. It exists only to show Night Desk working end to end. To run a different shop, edit `src/lib/shop.ts` and `src/lib/catalog.ts`.
 
 Status: M0 skeleton (Oct 29, 2026). Owner dashboard and buyer page come next.
 
