@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { hasEntry, record } from "@/lib/ledger";
+import { markPaid } from "@/lib/orders";
 import { captureOrder, PayPalError } from "@/lib/paypal";
 
 export const runtime = "nodejs";
@@ -11,6 +12,7 @@ export async function GET(req: Request) {
   if (!orderId) return NextResponse.redirect(`${env.appUrl()}/?paid=0`);
   try {
     const cap = await captureOrder(orderId);
+    markPaid(orderId, cap.captureId);
     if (!hasEntry("sale", cap.captureId)) {
       record({
         kind: "sale",

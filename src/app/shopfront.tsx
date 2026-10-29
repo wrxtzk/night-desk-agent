@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useEffect, useRef, useState } from "react";
-import type { OrderSlip } from "@/lib/agent";
+import type { OrderView } from "@/lib/agent";
 import type { Product } from "@/lib/catalog";
 import type { Currency } from "@/lib/paypal";
 import s from "./shopfront.module.css";
@@ -11,7 +11,8 @@ type Entry =
   | { kind: "buyer"; text: string }
   | { kind: "shop"; text: string }
   | { kind: "event"; tone: "paid" | "note" | "error"; text: string; retry?: string };
-type Order = OrderSlip & { captureId?: string };
+type Order = OrderView;
+type CarrierStep = "ship" | "stall" | "deliver";
 
 const SESSION_KEY = "night-desk-session";
 const THREAD_KEY = "night-desk-thread";
@@ -113,7 +114,58 @@ function PayButton({ order }: { order: Order }) {
   );
 }
 
-function Slip({ order }: { order: Order | null }) {
+const shortDate = (iso: string) => new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+// The parcel's (simulated) carrier record, newest scan first, and the demo buttons that play the next event.
+function Parcel({ order, busy, onStep }: { order: Order; busy: boolean; onStep: (step: CarrierStep) => void }) {
+  const last = order.events.at(-1)?.status;
+  const ship = { step: "ship" as const, label: "Owner ships it" };
+  const stall = { step: "stall" as const, label: "No scan for 5 days" };
+  const deliver = { step: "deliver" as const, label: "Parcel delivered" };
+  // Shipped: it can stall or arrive. Stalled (left Incheon, nothing since): it can only arrive.
+  const steps = !order.tracking ? [ship] : last === "accepted" ? [stall, deliver] : last === "in_transit" ? [deliver] : [];
+  return (
+    <section className={s.parcel} aria-labelledby="parcel-title">
+      <div className={s.parcelHead}>
+        <h3 id="parcel-title">Parcel</h3>
+        <span className={s.muted}>Simulated carrier</span>
+      </div>
+      {order.tracking ? (
+        <>
+          <p className={s.trackingLine}>
+            {order.tracking.carrier} <span className={s.trackingNo}>{order.tracking.number}</span>
+            {order.tracking.attachedToPayPal && <span className={s.muted}>, on the PayPal transaction</span>}
+          </p>
+          <ol className={s.scans} reversed>
+            {[...order.events].reverse().map((e) => (
+              <li key={e.at} data-status={e.status}>
+                <span className={s.scanWhen}>{shortDate(e.at)}</span>
+                <span>{e.note}</span>
+                <span className={s.muted}>{e.place}</span>
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : (
+        <p className={s.muted}>Not shipped yet. The owner packs orders in the morning, Seoul time.</p>
+      )}
+      {steps.length > 0 && (
+        <div className={s.demoSteps}>
+          <p className={s.muted}>Demo: these buttons stand in for the owner and the carrier, so you can see what the shopkeeper does next.</p>
+          <div>
+            {steps.map((x) => (
+              <button key={x.step} type="button" className={s.ghost} disabled={busy} onClick={() => onStep(x.step)}>
+                {x.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Slip({ order, busy, onStep }: { order: Order | null; busy: boolean; onStep: (step: CarrierStep) => void }) {
   if (!order) {
     return (
       <section className={s.slip} aria-labelledby="slip-title">
@@ -171,6 +223,23 @@ function Slip({ order }: { order: Order | null }) {
       ) : (
         <PayButton order={order} />
       )}
+      {order.refunds.length > 0 && (
+        <table className={s.lines}>
+          <tbody>
+            {order.refunds.map((r) => (
+              <tr key={r.id}>
+                <th scope="row">Refunded through PayPal</th>
+                <td className={s.refund}>−{money(r.amount, order.currency)}</td>
+              </tr>
+            ))}
+            <tr>
+              <th scope="row">You paid in the end</th>
+              <td>{money(order.total - order.refunds.reduce((sum, r) => sum + r.amount, 0), order.currency)}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+      {paid && <Parcel order={order} busy={busy} onStep={onStep} />}
       <dl className={s.slipMeta}>
         <div>
           <dt>PayPal order</dt>
@@ -221,6 +290,7 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
   const [busy, setBusy] = useState(false);
   const [currency, setCurrency] = useState<Currency>("USD");
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const [slipOpen, setSlipOpen] = useState(false);
   const [clock, setClock] = useState<{ time: string; night: boolean } | null>(null);
   const session = useRef("");
   const loaded = useRef(false);
@@ -251,7 +321,15 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
     }
     if (q.size) history.replaceState(null, "", location.pathname);
     setEntries(restored);
-    setOrder(restoredOrder);
+    // Orders saved by an older version of the page lack these lists.
+    setOrder(restoredOrder && { ...restoredOrder, events: restoredOrder.events ?? [], refunds: restoredOrder.refunds ?? [] });
+    // The shop's record is the source of truth (paid, shipped, refunded); the saved copy only bridges a restart.
+    if (restoredOrder) {
+      fetch(`/api/order?sessionId=${encodeURIComponent(session.current)}`)
+        .then((r) => r.json())
+        .then((d: { order: OrderView | null }) => d.order && setOrder(d.order))
+        .catch(() => {});
+    }
     if (navigator.language.toLowerCase().startsWith("ja")) setCurrency("JPY");
     loaded.current = true;
   }, []);
@@ -291,12 +369,32 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ sessionId: session.current, message: text }),
       });
-      const data = (await res.json()) as { text?: string; error?: string; order?: OrderSlip };
+      const data = (await res.json()) as { text?: string; error?: string; order?: OrderView };
       if (!res.ok || !data.text) throw new Error(data.error ?? `HTTP ${res.status}`);
       setEntries((e) => [...e, { kind: "shop", text: data.text! }]);
       if (data.order) setOrder(data.order);
     } catch {
       setEntries((e) => [...e, { kind: "event", tone: "error", text: "The shopkeeper didn't answer. Your message was not lost.", retry: text }]);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function carrierStep(step: CarrierStep) {
+    if (!order || busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/demo/carrier", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sessionId: session.current, orderId: order.orderId, step }),
+      });
+      const data = (await res.json()) as { notice?: string; text?: string; error?: string; order?: OrderView };
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
+      setEntries((e) => [...e, { kind: "event", tone: "note", text: data.notice ?? "" }, ...(data.text ? [{ kind: "shop" as const, text: data.text }] : [])]);
+      if (data.order) setOrder(data.order);
+    } catch (err) {
+      setEntries((e) => [...e, { kind: "event", tone: "error", text: err instanceof Error && err.message ? err.message : "That step didn't go through." }]);
     } finally {
       setBusy(false);
     }
@@ -448,7 +546,12 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
               <span className={s.muted}>{order.captureId ? "Paid" : "Your order"}</span>
               <strong>{money(order.total, order.currency)}</strong>
             </div>
-            {!order.captureId && <PayButton order={order} />}
+            <div className={s.orderBarActions}>
+              <button type="button" className={s.ghost} aria-expanded={slipOpen} aria-controls="order-rail" onClick={() => setSlipOpen((o) => !o)}>
+                {slipOpen ? "Close" : "Details"}
+              </button>
+              {!order.captureId && <PayButton order={order} />}
+            </div>
           </div>
         )}
 
@@ -484,8 +587,11 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
         </form>
       </main>
 
-      <aside className={s.rail}>
-        <Slip order={order} />
+      <aside id="order-rail" className={s.rail} data-open={slipOpen}>
+        <button type="button" className={`${s.ghost} ${s.sheetClose}`} onClick={() => setSlipOpen(false)}>
+          Back to the chat
+        </button>
+        <Slip order={order} busy={busy} onStep={(step) => void carrierStep(step)} />
         <section className={s.howto} aria-labelledby="howto-title">
           <h2 id="howto-title" className={s.panelTitle}>Paying in the sandbox</h2>
           <ol>

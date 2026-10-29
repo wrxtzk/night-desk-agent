@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { shopkeeperReply } from "@/lib/agent";
+import { fromBuyer, shopkeeperReply } from "@/lib/agent";
 
 export const runtime = "nodejs";
 
@@ -9,6 +9,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "sessionId and message are required" }, { status: 400 });
   }
   if (message.length > 2000) return NextResponse.json({ error: "message too long" }, { status: 400 });
-  const reply = await shopkeeperReply(sessionId, message.trim());
+  const reply = await shopkeeperReply(sessionId, fromBuyer(message));
   return NextResponse.json(reply);
 }
