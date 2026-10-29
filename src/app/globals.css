@@ -1,42 +1,64 @@
+/* Tokens from ../design.md (the single design spec). Components reference these only. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --ground: #f6f6f2;
+  --surface: #ffffff;
+  --hover: #fbfbf8;
+  --ink: #0e0e10;
+  --muted: #5d5d62;
+  --line: #e6e6e1;
+  --control-line: #d3d3cd;
+  --moon: #eef56a;
+  --block: #c8321f;
+  --block-bg: #fde9e5;
+  --refund: #1f5fbf;
+  --pass: #3a8a3a;
+  --on-ink: #fafaf7;
+  --radius: 10px;
+  --radius-control: 8px;
+  --font: var(--font-grotesk), var(--font-jp), "Pretendard", "Noto Sans KR", system-ui, sans-serif;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 15px/1.5 var(--font);
+  font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Japanese text reads better in Noto Sans JP than in the Latin face's fallback glyphs. */
+:lang(ja) {
+  font-family: var(--font-jp), var(--font-grotesk), sans-serif;
 }
 
 a {
   color: inherit;
-  text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--moon);
+  color: var(--ink);
 }

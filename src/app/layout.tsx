@@ -1,32 +1,22 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Noto_Sans_JP, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Type from design.md: Schibsted Grotesk for everything, Noto Sans JP for Japanese replies.
+const grotesk = Schibsted_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], weight: ["400", "500", "600", "800", "900"] });
+const notoJp = Noto_Sans_JP({ variable: "--font-jp", subsets: ["latin"], weight: ["400", "600", "800"], preload: false });
 
 export const metadata: Metadata = {
-  title: "Night Desk",
-  description: "Night Desk: an AI shopkeeper that minds a small cross-border shop overnight, with PayPal (sandbox).",
+  title: "Munbang Stationery, minded by Night Desk",
+  description: "A fictional Korean stationery shop on the PayPal sandbox, run overnight by Night Desk, an AI shopkeeper.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#f6f6f2" };
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-      </body>
+    <html lang="en" className={`${grotesk.variable} ${notoJp.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

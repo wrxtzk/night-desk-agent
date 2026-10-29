@@ -1,0 +1,731 @@
+/* Buyer page. Open-plane shell on the hanji ground (design.md, achromatic ledger):
+   1440 = 16 + 300 (catalog) + 16 + fluid chat + 16 + 360 (order) + 16. Every column runs to the same top and bottom edge. */
+.app {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 360px;
+  gap: 16px;
+  height: 100dvh;
+  padding: 16px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.panelTitle {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* Catalog column, on the ground. */
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 4px 8px 8px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 21px;
+  letter-spacing: -0.6px;
+}
+
+.sideHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+
+.segmented button {
+  min-width: 48px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.products {
+  list-style: none;
+}
+
+.products li + li {
+  border-top: 1px solid var(--line);
+}
+
+.products button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  row-gap: 2px;
+  width: 100%;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.products button:hover {
+  background: var(--surface);
+}
+
+.products button:active {
+  transform: translateY(1px);
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.price {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.productDesc,
+.stock {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stock {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.sideNote {
+  margin-top: 6px;
+  padding: 0 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.rules {
+  padding: 4px 8px 0;
+}
+
+.rules p {
+  margin: 6px 0 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.rules dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.rules dd {
+  font-weight: 600;
+}
+
+.phoneOnly {
+  display: none;
+}
+
+.demo {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 13px;
+}
+
+/* Conversation. */
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.chatHead {
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chatHead h1 {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -1px;
+}
+
+.chatHead p {
+  max-width: 64ch;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.thread {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 22px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.shopLine {
+  max-width: 68ch;
+}
+
+.rich {
+  display: grid;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.rich ul {
+  display: grid;
+  gap: 4px;
+  padding-left: 20px;
+}
+
+.rich strong {
+  font-weight: 600;
+}
+
+.inlinePay {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.buyerLine {
+  align-self: flex-end;
+  max-width: min(60ch, 80%);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.suggestions button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.suggestions button:hover {
+  border-color: var(--ink);
+  background: var(--hover);
+}
+
+.event {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  align-self: stretch;
+  padding: 10px 14px;
+  border-radius: var(--radius-control);
+  background: var(--ground);
+  font-size: 14px;
+}
+
+.event[data-tone="paid"] {
+  background: var(--moon);
+  font-weight: 600;
+}
+
+.event[data-tone="error"] {
+  background: var(--block-bg);
+  color: var(--block);
+}
+
+.textButton {
+  border: 0;
+  background: none;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.typing {
+  color: var(--muted);
+}
+
+.dots::after {
+  content: "...";
+  display: inline-block;
+  width: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: dots 1.2s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  from {
+    width: 0;
+  }
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.composer textarea {
+  flex: 1;
+  min-height: 48px;
+  max-height: 160px;
+  padding: 12px 14px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 16px;
+  resize: none;
+  field-sizing: content;
+}
+
+.composer textarea:focus-visible {
+  outline-offset: 0;
+  border-color: var(--ink);
+}
+
+.send {
+  min-width: 88px;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 120ms ease, transform 80ms ease;
+}
+
+.send:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.send:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Order slip. */
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.howto {
+  padding: 4px 8px;
+}
+
+.howto ol {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.howto li::marker {
+  font-weight: 600;
+}
+
+.slip {
+  display: grid;
+  gap: 16px;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.slipHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pillOpen,
+.pillPaid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pillOpen {
+  background: var(--moon);
+}
+
+.pillPaid {
+  background: var(--ground);
+}
+
+.pillOpen::before,
+.pillPaid::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.pillPaid::before {
+  background: var(--pass);
+}
+
+.slipEmpty {
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.lines {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.lines th,
+.lines td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.lines th {
+  font-weight: 400;
+  text-align: left;
+}
+
+.lines td {
+  padding-left: 12px;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.total span {
+  font-weight: 600;
+}
+
+.total strong {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.total mark {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--moon);
+  color: var(--ink);
+}
+
+.pay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 80ms ease, background-color 120ms ease;
+}
+
+.pay:hover {
+  background: #26262a;
+}
+
+.pay:active {
+  transform: translateY(1px);
+}
+
+.payMark {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.paidNote {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.paidNote svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--pass);
+}
+
+.slipMeta {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.slipMeta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.slipMeta dt {
+  color: var(--muted);
+}
+
+.slipMeta dd {
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.slip > .muted {
+  font-size: 13px;
+}
+
+/* The phone bar and the order bar only appear when the side columns fold away. */
+.phoneBar,
+.orderBar {
+  display: none;
+}
+
+.ghost {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Tablet: the catalog folds into a sheet; chat and order stay side by side. */
+@media (max-width: 1179px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .phoneBar {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+  }
+
+  .phoneName {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .side {
+    display: none;
+  }
+
+  .side[data-open="true"] {
+    position: fixed;
+    inset: 64px 0 0;
+    z-index: 10;
+    display: flex;
+    padding: 16px 20px 24px;
+    background: var(--ground);
+  }
+
+  .side[data-open="true"] .brand {
+    display: none;
+  }
+}
+
+/* Phone: one region; the order becomes a bar above the composer. */
+@media (max-width: 799px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 0 0 0;
+  }
+
+  .phoneBar {
+    padding: 0 16px;
+  }
+
+  .side[data-open="true"] {
+    inset: 48px 0 0;
+  }
+
+  .chat {
+    border-width: 1px 0 0;
+    border-radius: 0;
+  }
+
+  .chatHead {
+    padding: 16px 16px 14px;
+  }
+
+  .chatHead h1 {
+    font-size: 24px;
+    letter-spacing: -0.6px;
+  }
+
+  .chatHead p {
+    font-size: 14px;
+  }
+
+  .thread {
+    padding: 18px 16px;
+  }
+
+  .buyerLine {
+    max-width: 88%;
+  }
+
+  .rail {
+    display: none;
+  }
+
+  .phoneOnly {
+    display: grid;
+    gap: 20px;
+  }
+
+  .orderBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .orderBar > div {
+    display: grid;
+    font-size: 13px;
+  }
+
+  .orderBar strong {
+    font-size: 20px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .orderBar .pay {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .composer {
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dots::after {
+    animation: none;
+    width: 1.2em;
+  }
+
+  .products button,
+  .send,
+  .pay,
+  .suggestions button {
+    transition: none;
+  }
+}

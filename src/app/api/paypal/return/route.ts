@@ -24,7 +24,7 @@ export async function GET(req: Request) {
         paypalId: cap.captureId,
       });
     }
-    return NextResponse.redirect(`${env.appUrl()}/?paid=1&capture=${cap.captureId}`);
+    return NextResponse.redirect(`${env.appUrl()}/?paid=1&order=${orderId}&capture=${cap.captureId}`);
   } catch (err) {
     const detail = err instanceof PayPalError ? err.status : "error";
     return NextResponse.redirect(`${env.appUrl()}/?paid=0&reason=${detail}`);
