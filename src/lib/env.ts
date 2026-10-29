@@ -12,7 +12,8 @@ export const env = {
   paypalWebhookId: () => process.env.PAYPAL_WEBHOOK_ID ?? "",
   // Public base URL of this app, used for PayPal return/cancel URLs.
   appUrl: () => process.env.APP_URL ?? "http://localhost:3000",
-  model: () => process.env.NIGHT_DESK_MODEL ?? "claude-opus-5-5",
+  // Haiku 5.5: the shopkeeper's work is short tool-calling turns, and the money rules live in code, not in the model.
+  model: () => process.env.NIGHT_DESK_MODEL ?? "claude-haiku-5-5",
 };
 
 // Night Desk only ever talks to the PayPal sandbox.

@@ -9,7 +9,7 @@ The demo shop, **Munbang Stationery**, is fictional: a made-up Korean stationery
 Status: M0 skeleton (Oct 29, 2026). Owner dashboard and buyer page come next.
 
 ## How it works
-- **Claude** (Anthropic API, `@anthropic-ai/sdk` tool runner) is the shopkeeper. Model: `claude-opus-5-5` by default, override with `NIGHT_DESK_MODEL`.
+- **Claude** (Anthropic API, `@anthropic-ai/sdk` tool runner) is the shopkeeper. Model: `claude-haiku-5-5` by default (short tool-calling turns; the money rules are enforced in code), with the system prompt and tools prompt-cached. Override with `NIGHT_DESK_MODEL`, e.g. `claude-sonnet-5-5`.
 - **PayPal REST API** (sandbox) for orders in USD or JPY, capture and partial refunds: `src/lib/paypal.ts`.
 - **PayPal Agent Toolkit** (`@paypal/agent-toolkit`) for order lookup and shipment tracking: `src/lib/agent.ts`.
 - **Rule gate** (`src/lib/rules.ts`): discount ≤ 15%, refunds ≤ $15 go out automatically, more is held for the owner, at most $30 of refunds per day.
