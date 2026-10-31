@@ -60,7 +60,7 @@ function check(p: Proposal): Product | string {
   if (parts.length < 2 || parts.length > 3 || parts.some((x) => !x || x.bundleOf)) return "a set needs two or three catalog products";
   const items = parts as Product[];
   const sum = (c: "USD" | "JPY") => items.reduce((s, x) => s + x.price[c], 0);
-  const floor = 1 - houseRules.maxDiscountPct / 100;
+  const floor = 1 - houseRules().maxDiscountPct / 100;
   if (!Number.isInteger(p.priceUSD) || p.priceUSD > sum("USD") || p.priceUSD < Math.ceil(sum("USD") * floor)) return "USD price outside the discount rule";
   if (p.priceJPY % 100 !== 0 || p.priceJPY > sum("JPY") || p.priceJPY < sum("JPY") * floor) return "JPY price outside the discount rule";
   const sku = `SET-${items.map((x) => x.sku.split("-")[0]).join("-")}`;
@@ -92,7 +92,7 @@ async function propose(window: { start: string; end: string }): Promise<Suggesti
   if (top.length === 0) return null;
   const lead = top[0];
   const evidence = `${countryName[lead.country] ?? lead.country} buyers asked about the ${lead.product.toLowerCase()} ${lead.asks} times${lead.bought ? ` and bought ${lead.bought}` : ""}.`;
-  const products = catalog.filter((p) => !p.bundleOf).map(({ sku, name, price, stock }) => ({ sku, name, price, stock }));
+  const products = catalog().filter((p) => !p.bundleOf).map(({ sku, name, price, stock }) => ({ sku, name, price, stock }));
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const res = await client.messages.create({
@@ -103,7 +103,7 @@ async function propose(window: { start: string; end: string }): Promise<Suggesti
       messages: [
         {
           role: "user",
-          content: `You help the owner of a small Korean stationery shop that sells abroad. Last night's demand (asks = quotes, bought = paid orders):\n${JSON.stringify(top)}\n\nCatalog:\n${JSON.stringify(products)}\n\nPropose one set built around what buyers asked about most, for those buyers. Price it below the sum of its parts but no more than ${houseRules.maxDiscountPct}% off.`,
+          content: `You help the owner of a small Korean stationery shop that sells abroad. Last night's demand (asks = quotes, bought = paid orders):\n${JSON.stringify(top)}\n\nCatalog:\n${JSON.stringify(products)}\n\nPropose one set built around what buyers asked about most, for those buyers. Price it below the sum of its parts but no more than ${houseRules().maxDiscountPct}% off.`,
         },
       ],
     });

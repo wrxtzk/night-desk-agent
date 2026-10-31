@@ -17,7 +17,9 @@ function db(): DatabaseSync {
   const dir = process.env.DATA_DIR ?? path.join(process.cwd(), ".data");
   mkdirSync(dir, { recursive: true });
   const conn = new DatabaseSync(path.join(dir, "night-desk.db"));
-  conn.exec(`PRAGMA journal_mode = WAL;
+  // Several processes can open the file at once (next build collects page data in parallel workers): wait, don't fail.
+  conn.exec(`PRAGMA busy_timeout = 10000;
+    PRAGMA journal_mode = WAL;
     CREATE TABLE IF NOT EXISTS docs (kind TEXT NOT NULL, id TEXT NOT NULL, at TEXT NOT NULL, json TEXT NOT NULL, PRIMARY KEY (kind, id));`);
   return (store.db = conn);
 }

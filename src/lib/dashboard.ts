@@ -45,7 +45,7 @@ export async function dashboardData() {
     suggestion,
     ledger: entries.filter(shown).map(ledgerRow).reverse(),
     holds: openHolds().map(ledgerRow),
-    rules: { ...houseRules },
+    rules: { ...houseRules() },
     bounds: ruleBounds,
     ownerKeyRequired: ownerKeyRequired(),
     seeded: entries.some((e) => e.seed) ? seedNote : null,

@@ -45,7 +45,7 @@ export function buildReport(entries = allEntries()) {
     refunds: { count: refunds.length, usd: round(refundedUsd) },
     keptUsd: round(netUsd + refundedUsd),
     autoRefundedUsd: round(autoRefundedUsd),
-    dailyRefundUsd: houseRules.dailyRefundUsd,
+    dailyRefundUsd: houseRules().dailyRefundUsd,
     blocked: inWindow.filter((e) => e.gate === "block").length,
     needsYou: entries.filter((e) => e.gate === "hold" && !e.resolution).length,
     activity: {

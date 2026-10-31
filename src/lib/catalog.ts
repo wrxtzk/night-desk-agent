@@ -24,16 +24,16 @@ const baseCatalog: Product[] = [
 
 // The base catalog plus the sets the owner adopted, shared by every route bundle.
 const g = globalThis as unknown as { __nightDeskCatalog?: Product[] };
-export const catalog: Product[] = (g.__nightDeskCatalog ??= [...baseCatalog, ...load<Product>("product")]);
+export const catalog = (): Product[] => (g.__nightDeskCatalog ??= [...baseCatalog, ...load<Product>("product")]);
 
 export function addProduct(p: Product) {
   if (findProduct(p.sku)) throw new Error(`${p.sku} is already in the catalog.`);
-  catalog.push(p);
+  catalog().push(p);
   save("product", p.sku, p);
 }
 
 export function findProduct(sku: string): Product | undefined {
-  return catalog.find((p) => p.sku === sku);
+  return catalog().find((p) => p.sku === sku);
 }
 
 // Korea Post small-packet estimate by weight band and destination region (simplified for the demo).

@@ -7,5 +7,5 @@ import { Shopfront } from "./shopfront";
 export const dynamic = "force-dynamic"; // the catalog grows when the owner adopts a set
 
 export default function Home() {
-  return <Shopfront shop={shop} catalog={catalog} rules={houseRules} />;
+  return <Shopfront shop={shop} catalog={catalog()} rules={houseRules()} />;
 }

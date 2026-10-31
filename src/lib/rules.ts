@@ -23,19 +23,20 @@ export const ruleBounds: Record<keyof HouseRules, [number, number]> = {
 };
 
 // Read live: the gate and the shopkeeper's prompt always see the owner's latest values.
-// Kept on globalThis like the other stores, so every route bundle shares one copy.
+// Kept on globalThis like the other stores, so every route bundle shares one copy, and read from the database
+// on first use, not at import (next build imports every route in parallel workers).
 const g = globalThis as unknown as { __nightDeskRules?: HouseRules };
-export const houseRules: HouseRules = (g.__nightDeskRules ??= { ...defaultRules, ...loadOne<HouseRules>("rules", "house") });
+export const houseRules = (): HouseRules => (g.__nightDeskRules ??= { ...defaultRules, ...loadOne<HouseRules>("rules", "house") });
 
 export function setRules(next: Partial<HouseRules>): HouseRules {
   for (const [key, [min, max]] of Object.entries(ruleBounds) as [keyof HouseRules, [number, number]][]) {
     const v = next[key];
     if (v === undefined) continue;
     if (!Number.isFinite(v) || v < min || v > max) throw new RangeError(`${key} must be between ${min} and ${max}.`);
-    houseRules[key] = key === "lateAfterDays" ? Math.round(v) : v;
+    houseRules()[key] = key === "lateAfterDays" ? Math.round(v) : v;
   }
-  save("rules", "house", houseRules);
-  return houseRules;
+  save("rules", "house", houseRules());
+  return houseRules();
 }
 
 // Fixed demo rate for gate checks on JPY amounts (matches what the sandbox returned on 2026-10-29).
@@ -47,10 +48,10 @@ export type GateResult = { verdict: Verdict; note: string };
 export function gateDiscount(discount: number, subtotal: number): GateResult {
   if (discount < 0) return { verdict: "block", note: "Negative discount." };
   const pct = subtotal > 0 ? (discount / subtotal) * 100 : 0;
-  if (pct > houseRules.maxDiscountPct + 0.01) {
-    return { verdict: "block", note: `Discount ${pct.toFixed(1)}% is over the ${houseRules.maxDiscountPct}% house limit.` };
+  if (pct > houseRules().maxDiscountPct + 0.01) {
+    return { verdict: "block", note: `Discount ${pct.toFixed(1)}% is over the ${houseRules().maxDiscountPct}% house limit.` };
   }
-  return { verdict: "pass", note: `Discount ${pct.toFixed(1)}% is within the ${houseRules.maxDiscountPct}% limit.` };
+  return { verdict: "pass", note: `Discount ${pct.toFixed(1)}% is within the ${houseRules().maxDiscountPct}% limit.` };
 }
 
 // What the buyer says went wrong. The gate checks the claim against the carrier record.
@@ -66,14 +67,14 @@ export function gateRefund(order: ShopOrder | undefined, amount: number, claim: 
   if (amount > left + 1e-9) return { verdict: "block", note: `Only ${left} ${order.currency} of this order is left to refund.` };
 
   const parcel = parcelState(order);
-  const late = parcel.shipped && !parcel.delivered && parcel.daysSinceLastScan >= houseRules.lateAfterDays;
+  const late = parcel.shipped && !parcel.delivered && parcel.daysSinceLastScan >= houseRules().lateAfterDays;
   if (claim === "not_received" || claim === "late") {
     if (parcel.delivered && parcel.last) {
       return { verdict: "block", note: `Carrier shows the parcel delivered on ${fmtDate(parcel.last.at)} at ${parcel.last.place} (${parcel.last.note}).` };
     }
     if (!parcel.shipped) return { verdict: "hold", note: "Not shipped yet. Cancelling an unshipped order is the owner's call. Held for the owner." };
     if (!late) {
-      return { verdict: "block", note: `Not late: last carrier scan ${parcel.daysSinceLastScan} day(s) ago; a parcel counts as late after ${houseRules.lateAfterDays} days without a scan.` };
+      return { verdict: "block", note: `Not late: last carrier scan ${parcel.daysSinceLastScan} day(s) ago; a parcel counts as late after ${houseRules().lateAfterDays} days without a scan.` };
     }
   } else {
     return { verdict: "hold", note: `This "${claim}" claim needs the owner to look at it (photos, details). Held for the owner.` };
@@ -81,12 +82,12 @@ export function gateRefund(order: ShopOrder | undefined, amount: number, claim: 
 
   const usd = toUsd(amount, order.currency);
   const orderUsd = toUsd(refundedAmount(order), order.currency) + usd;
-  if (orderUsd > houseRules.autoRefundUsd + 1e-9) {
-    return { verdict: "hold", note: `Would bring this order's refunds to $${orderUsd.toFixed(2)}, over the $${houseRules.autoRefundUsd} the shopkeeper may refund on its own. Held for the owner.` };
+  if (orderUsd > houseRules().autoRefundUsd + 1e-9) {
+    return { verdict: "hold", note: `Would bring this order's refunds to $${orderUsd.toFixed(2)}, over the $${houseRules().autoRefundUsd} the shopkeeper may refund on its own. Held for the owner.` };
   }
   const today = refundedTodayUsd() + usd;
-  if (today > houseRules.dailyRefundUsd + 1e-9) {
-    return { verdict: "hold", note: `Would bring today's refunds to $${today.toFixed(2)}, over the $${houseRules.dailyRefundUsd} daily limit. Held for the owner.` };
+  if (today > houseRules().dailyRefundUsd + 1e-9) {
+    return { verdict: "hold", note: `Would bring today's refunds to $${today.toFixed(2)}, over the $${houseRules().dailyRefundUsd} daily limit. Held for the owner.` };
   }
-  return { verdict: "pass", note: `Late parcel (no scan for ${parcel.daysSinceLastScan} days); $${usd.toFixed(2)} is within the $${houseRules.autoRefundUsd} per-order and $${houseRules.dailyRefundUsd} daily limits.` };
+  return { verdict: "pass", note: `Late parcel (no scan for ${parcel.daysSinceLastScan} days); $${usd.toFixed(2)} is within the $${houseRules().autoRefundUsd} per-order and $${houseRules().dailyRefundUsd} daily limits.` };
 }
