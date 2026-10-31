@@ -1,0 +1,801 @@
+/* Owner dashboard, built from the approved screen design/owner-dashboard.html and ../design.md:
+   white page, near-black grotesk, one moonlight accent (headline amount, "Needs you", the primary button on the dark card). */
+.page {
+  min-height: 100dvh;
+  background: var(--surface);
+  padding-bottom: 44px;
+  overflow-x: clip;
+}
+
+.wrap {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  height: 62px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 21px;
+  letter-spacing: -0.6px;
+}
+
+.nav {
+  display: flex;
+  gap: 2px;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav a:hover {
+  color: var(--ink);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--ink);
+  background: var(--ground);
+}
+
+.count {
+  background: var(--ink);
+  color: var(--moon);
+  border-radius: 4px;
+  padding: 0 6px;
+  margin-left: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.sandbox {
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px dashed var(--ink);
+  color: var(--ink);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.paypal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--paypal-blue);
+}
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 40px;
+  align-items: end;
+  padding: 30px 0 24px;
+}
+
+.hero h1 {
+  font-weight: 800;
+  font-size: 54px;
+  line-height: 1.06;
+  letter-spacing: -2px;
+  text-wrap: balance;
+}
+
+.hero mark {
+  background: var(--moon);
+  color: var(--ink);
+  padding: 0 8px;
+  border-radius: 6px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.kpis > div {
+  padding: 14px 16px;
+  border-left: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.kpis > div:first-child {
+  border-left: 0;
+}
+
+.kpis b {
+  display: block;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--ink);
+  letter-spacing: -0.8px;
+  margin-top: 4px;
+}
+
+.kpis small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+/* Main grid */
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panelHead h2,
+.boxTitle {
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+}
+
+.panelHead small {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.tools {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  min-height: 32px;
+  background: var(--surface);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--on-ink);
+  border-color: var(--ink);
+}
+
+/* Ledger table */
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.table th {
+  background: var(--ground);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: left;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table th > span,
+.sort {
+  display: block;
+  padding: 9px 12px;
+}
+
+.sort {
+  width: 100%;
+  border: 0;
+  background: none;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.sort:hover {
+  color: var(--ink);
+}
+
+.num {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover td {
+  background: var(--hover);
+}
+
+.table tbody tr[aria-selected="true"] td {
+  background: var(--selected);
+}
+
+.time {
+  white-space: nowrap;
+}
+
+.time small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.what {
+  font-weight: 600;
+}
+
+.who {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.reason {
+  color: var(--muted);
+  font-size: 14px;
+  max-width: 300px;
+}
+
+.gateNote {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.currency {
+  font-weight: 600;
+  font-size: 12px;
+  background: var(--ground);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.negative {
+  color: var(--refund);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.pass {
+  background: var(--pass-bg);
+}
+
+.pass i {
+  background: var(--pass);
+}
+
+.hold {
+  background: var(--moon);
+}
+
+.hold i {
+  background: var(--ink);
+}
+
+.block {
+  background: var(--block-bg);
+  color: var(--block);
+}
+
+.block i {
+  background: var(--block);
+}
+
+.decided {
+  background: var(--pass-bg);
+}
+
+.decided i {
+  background: var(--muted);
+}
+
+.resolved {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.empty {
+  padding: 28px 16px;
+  color: var(--muted);
+}
+
+/* Side column */
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.need {
+  background: var(--ink);
+  color: var(--on-ink);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.needLabel {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--moon);
+}
+
+.need h3 {
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin: 8px 0;
+}
+
+.need p {
+  color: var(--on-ink-muted);
+  font-size: 14px;
+}
+
+.need .gateLine {
+  margin-top: 8px;
+  color: var(--on-ink);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  border: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  background: var(--line);
+  border-color: var(--line);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.moonButton {
+  background: var(--moon);
+  color: var(--ink);
+}
+
+.outlineDark {
+  background: transparent;
+  border: 1px solid var(--on-ink-line);
+  color: var(--on-ink);
+}
+
+.inkButton {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.lineButton {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.done {
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--moon);
+}
+
+.error {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--on-ink-error);
+}
+
+.errorLight {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--block);
+}
+
+.keyField {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.keyField input {
+  min-height: 40px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--on-ink-line);
+  background: transparent;
+  color: var(--on-ink);
+  padding: 0 10px;
+}
+
+.box {
+  padding: 16px;
+}
+
+.list {
+  list-style: none;
+  margin: 10px 0;
+}
+
+.list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.list li:last-child {
+  border-bottom: 0;
+}
+
+.list li > :last-child {
+  font-weight: 600;
+  text-align: right;
+}
+
+.recon {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.recon svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.suggestion {
+  margin-top: 14px;
+  background: var(--ground);
+  border-radius: var(--radius-control);
+  padding: 12px;
+  font-size: 14px;
+}
+
+.suggestion p + p {
+  margin-top: 6px;
+}
+
+.boxHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.textButton {
+  border: 0;
+  background: none;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.bar {
+  height: 8px;
+  background: var(--ground);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+
+.ruleForm {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ruleForm label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.ruleForm input {
+  width: 92px;
+  min-height: 40px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  padding: 0 10px;
+  text-align: right;
+}
+
+.ruleForm small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.foot {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 18px 0 8px;
+}
+
+/* Agent activity bar, the only place Geist Mono is used. */
+.tick {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font: 13px var(--font-mono), ui-monospace, monospace;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.tickLabel {
+  background: var(--moon);
+  color: var(--ink);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-weight: 600;
+  flex: none;
+  z-index: 1;
+}
+
+.run {
+  display: flex;
+  gap: 34px;
+  padding-left: 24px;
+  animation: run 40s linear infinite;
+}
+
+.run b {
+  color: var(--moon);
+  font-weight: 600;
+}
+
+@keyframes run {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run {
+    animation: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    padding: 0 16px;
+  }
+  .header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 0;
+    gap: 10px;
+  }
+  .nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .clock {
+    display: none;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 20px 0;
+  }
+  .hero h1 {
+    font-size: 36px;
+    letter-spacing: -1.2px;
+  }
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kpis > div:nth-child(3) {
+    border-left: 0;
+  }
+  .kpis > div:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .panelHead {
+    flex-wrap: wrap;
+  }
+  .tools {
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+}
+
+/* Phone: each ledger row becomes a small card (time, entry, status / amount, net / reason). */
+@media (max-width: 700px) {
+  .table,
+  .table tbody {
+    display: block;
+    min-width: 0;
+  }
+  .table thead {
+    display: none;
+  }
+  .table tr {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 4px 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .table td {
+    padding: 0;
+    border: 0;
+    background: none !important;
+  }
+  .table td:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+    color: var(--muted);
+  }
+  .table td:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .table td:nth-child(8) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .table td:nth-child(3),
+  .table td:nth-child(5) {
+    display: none;
+  }
+  .table td:nth-child(4) {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: left !important;
+  }
+  .table td:nth-child(6) {
+    grid-column: 3;
+    grid-row: 2;
+    font-weight: 600;
+  }
+  .table td:nth-child(7) {
+    grid-column: 2 / 4;
+    grid-row: 3;
+  }
+  .reason {
+    max-width: none;
+  }
+  .scroll {
+    overflow: visible;
+  }
+}

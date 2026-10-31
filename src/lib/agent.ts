@@ -5,14 +5,16 @@ import { PayPalAgentToolkit } from "@paypal/agent-toolkit/openai";
 import { z } from "zod/v4";
 import { CARRIER } from "./carrier";
 import { catalog, findProduct, shippingEstimate } from "./catalog";
+import { load, save } from "./db";
 import { env } from "./env";
 import { record } from "./ledger";
-import { addOrder, addRefund, getOrder, orderSummary, ordersForSession, type ShopOrder } from "./orders";
+import { addOrder, addRefund, getOrder, orderSummary, ordersForSession, saveOrder, type ShopOrder } from "./orders";
 import { createOrder, refundCapture, PayPalError, type Currency } from "./paypal";
 import { gateDiscount, gateRefund, houseRules, toUsd } from "./rules";
 import { shop } from "./shop";
 
-const SYSTEM = `You are Night Desk, the shopkeeper of ${shop.name}, a small online shop in ${shop.shipsFrom} that sells ${shop.sells} to buyers abroad. The owner is asleep; you run the shop and you move real money through the shop's PayPal account (sandbox).
+// Built per request so a rule the owner changes in the dashboard reaches the shopkeeper at once.
+const system = () => `You are Night Desk, the shopkeeper of ${shop.name}, a small online shop in ${shop.shipsFrom} that sells ${shop.sells} to buyers abroad. The owner is asleep; you run the shop and you move real money through the shop's PayPal account (sandbox).
 
 How you work:
 - Reply in the buyer's language. Quote in their currency: JPY for Japan, USD for everyone else.
@@ -59,14 +61,17 @@ const quote = betaZodTool({
     items: itemsSchema,
     country: z.string().length(2).describe("Buyer's country, ISO 3166-1 alpha-2, e.g. US, JP"),
     currency: z.enum(["USD", "JPY"]),
+    buyer: z.string().optional().describe("Buyer's city and country if they said, e.g. 'Osaka, JP'"),
   }),
-  run: async ({ items, country, currency }) => {
+  run: async ({ items, country, currency, buyer }) => {
     const priced = priceItems(items, currency);
     const subtotal = priced.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
     const weight = priced.reduce((s, i) => s + i.product.weightGrams * i.quantity, 0);
     const shipping = shippingEstimate(weight, country, currency);
     // Rough planning figure only; real duties depend on the customs office.
     const dutyRate = country === "US" ? 0.1 : 0;
+    // The morning report reads these to see what buyers asked about.
+    record({ kind: "quote", buyer: buyer ?? country, currency, amount: subtotal + shipping, items: priced.map((i) => i.product.name), reason: `Priced ${priced.map((i) => i.product.name).join(" + ")} to ${buyer ?? country}.`, gate: "pass" });
     return JSON.stringify({ currency, subtotal, shipping, total: subtotal + shipping, estimatedDutiesOnDelivery: Math.round(subtotal * dutyRate * 100) / 100, note: "Duties are an estimate, paid by the buyer to the carrier." });
   },
 });
@@ -94,7 +99,7 @@ function sessionTools(sessionId: string) {
       const subtotal = priced.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
       const gate = gateDiscount(discount, subtotal);
       if (gate.verdict !== "pass") {
-        record({ kind: "order", buyer, currency, amount: subtotal - discount, reason, gate: gate.verdict, gateNote: gate.note });
+        record({ kind: "order", buyer, currency, amount: subtotal - discount, items: priced.map((i) => i.product.name), reason, gate: gate.verdict, gateNote: gate.note });
         return JSON.stringify({ blocked: true, gate: gate.note });
       }
       const weight = priced.reduce((s, i) => s + i.product.weightGrams * i.quantity, 0);
@@ -110,7 +115,7 @@ function sessionTools(sessionId: string) {
       });
       const total = Number(order.total);
       addOrder({ orderId: order.orderId, sessionId, buyer, country, currency, lines, subtotal, discount, shipping, total, payUrl: order.approveUrl });
-      record({ kind: "order", buyer, currency, amount: total, reason, gate: "pass", gateNote: gate.note, paypalId: order.orderId });
+      record({ kind: "order", buyer, currency, amount: total, items: lines.map((l) => l.name), reason, gate: "pass", gateNote: gate.note, paypalId: order.orderId, orderId: order.orderId });
       return JSON.stringify({ orderId: order.orderId, currency, lines, subtotal, discount, shipping, total, payUrl: order.approveUrl });
     },
   });
@@ -140,13 +145,13 @@ function sessionTools(sessionId: string) {
       const usd = currency ? toUsd(amount, currency) : amount;
       const buyer = order?.buyer;
       if (gate.verdict !== "pass" || !order?.captureId) {
-        record({ kind: "refund_request", buyer, currency, amount, netUsd: -usd, reason: `[${claim}] ${reason}`, gate: gate.verdict, gateNote: gate.note, paypalId: order?.captureId ?? orderId });
+        record({ kind: "refund_request", buyer, currency, amount, netUsd: -usd, reason: `[${claim}] ${reason}`, gate: gate.verdict, gateNote: gate.note, paypalId: order?.captureId, orderId: order?.orderId });
         return JSON.stringify({ refunded: false, status: gate.verdict === "hold" ? "held_for_owner" : "refused", check: gate.note });
       }
       try {
         const refund = await refundCapture({ captureId: order.captureId, amount, currency: order.currency, note: messageToBuyer });
         addRefund(order.orderId, { id: refund.id, amount });
-        record({ kind: "refund", buyer, currency, amount: -amount, netUsd: -usd, reason: `[${claim}] ${reason}`, gate: "pass", gateNote: gate.note, paypalId: refund.id });
+        record({ kind: "refund", buyer, currency, amount: -amount, netUsd: -usd, reason: `[${claim}] ${reason}`, gate: "pass", gateNote: gate.note, paypalId: refund.id, orderId: order.orderId });
         return JSON.stringify({ refunded: true, refundId: refund.id, status: refund.status, check: gate.note });
       } catch (err) {
         if (err instanceof PayPalError) return JSON.stringify({ refunded: false, paypalError: err.body });
@@ -192,7 +197,8 @@ function paypalToolkitTools(own: (orderId: string) => ShopOrder | undefined) {
         const content = typeof result.content === "string" ? result.content : JSON.stringify(result.content);
         if (t.function.name === "create_shipment_tracking" && order.tracking && trackerAdded(content)) {
           order.tracking.attachedToPayPal = true;
-          record({ kind: "tracking", buyer: order.buyer, reason: `Attached ${CARRIER} tracking ${a.tracking_number} to the PayPal transaction.`, gate: "pass", paypalId: order.captureId });
+          saveOrder(order);
+          record({ kind: "tracking", buyer: order.buyer, reason: `Attached ${CARRIER} tracking ${a.tracking_number} to the PayPal transaction.`, gate: "pass", paypalId: order.captureId, orderId: order.orderId });
         }
         return content;
       },
@@ -202,9 +208,25 @@ function paypalToolkitTools(own: (orderId: string) => ShopOrder | undefined) {
 
 const client = new Anthropic();
 
-// One conversation per buyer chat, kept in memory for now.
+// One conversation per buyer chat, stored in SQLite so the owner's decisions can still reach it after a restart.
+type Conversation = { id: string; messages: Anthropic.Beta.Messages.BetaMessageParam[] };
 const sessions = globalThis as unknown as { __nightDeskSessions?: Map<string, Anthropic.Beta.Messages.BetaMessageParam[]> };
-const store = (sessions.__nightDeskSessions ??= new Map());
+const store = (sessions.__nightDeskSessions ??= new Map(load<Conversation>("session").map((c) => [c.id, c.messages])));
+
+// Messages the shop posted into a buyer's chat on its own (after the owner decided something), for the buyer page to pick up.
+export type ShopMessage = { at: string; notice: string; text: string };
+const outboxes = globalThis as unknown as { __nightDeskOutbox?: Map<string, ShopMessage[]> };
+const outbox = (outboxes.__nightDeskOutbox ??= new Map(load<{ id: string; messages: ShopMessage[] }>("outbox").map((b) => [b.id, b.messages])));
+
+export const shopMessages = (sessionId: string) => outbox.get(sessionId) ?? [];
+
+export async function postToBuyer(order: ShopOrder, notice: string, event: string) {
+  const reply = await shopkeeperReply(order.sessionId, event);
+  const messages = [...shopMessages(order.sessionId), { at: new Date().toISOString(), notice, text: reply.text }];
+  outbox.set(order.sessionId, messages);
+  save("outbox", order.sessionId, { id: order.sessionId, messages });
+  return reply;
+}
 
 // The buyer's latest order as the buyer page shows it.
 export type OrderView = ReturnType<typeof orderView>;
@@ -232,8 +254,8 @@ export async function shopkeeperReply(sessionId: string, userText: string): Prom
   const runner = client.beta.messages.toolRunner({
     model,
     max_tokens: 16000,
-    // Tools and the system prompt never change, so they are cached once; the top-level marker caches the growing conversation.
-    system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
+    // Tools and the system prompt change only when the owner edits a rule, so they stay cached; the top-level marker caches the growing conversation.
+    system: [{ type: "text", text: system(), cache_control: { type: "ephemeral" } }],
     cache_control: { type: "ephemeral" },
     output_config: { effort: "low" },
     ...fallback,
@@ -255,6 +277,7 @@ export async function shopkeeperReply(sessionId: string, userText: string): Prom
   // runner.params.messages holds the turn's history up to the last request; append the final reply.
   const transcript = [...runner.params.messages, { role: "assistant" as const, content: final.content }];
   store.set(sessionId, transcript);
+  save("session", sessionId, { id: sessionId, messages: transcript });
 
   const order = latestOrder(sessionId);
   if (final.stop_reason === "refusal") {

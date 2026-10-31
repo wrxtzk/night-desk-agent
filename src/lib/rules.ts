@@ -1,15 +1,42 @@
+import { loadOne, save } from "./db";
 import { refundedTodayUsd, type Verdict } from "./ledger";
 import { parcelState, refundedAmount, type ShopOrder } from "./orders";
 import type { Currency } from "./paypal";
 
 // The owner's house rules. The gate runs in code before any PayPal call that moves money,
 // so a buyer who talks the model into something still cannot get past it.
-export const houseRules = {
-  maxDiscountPct: 15,
-  autoRefundUsd: 15, // per order, all refunds the shopkeeper makes on its own
-  dailyRefundUsd: 30,
-  lateAfterDays: 5, // no carrier scan for this long counts as a late parcel
+export type HouseRules = {
+  maxDiscountPct: number;
+  autoRefundUsd: number; // per order, all refunds the shopkeeper makes on its own
+  dailyRefundUsd: number;
+  lateAfterDays: number; // no carrier scan for this long counts as a late parcel
 };
+
+export const defaultRules: HouseRules = { maxDiscountPct: 15, autoRefundUsd: 15, dailyRefundUsd: 30, lateAfterDays: 5 };
+
+// The owner can change the rules from the dashboard, within these bounds.
+export const ruleBounds: Record<keyof HouseRules, [number, number]> = {
+  maxDiscountPct: [0, 30],
+  autoRefundUsd: [0, 50],
+  dailyRefundUsd: [0, 200],
+  lateAfterDays: [2, 21],
+};
+
+// Read live: the gate and the shopkeeper's prompt always see the owner's latest values.
+// Kept on globalThis like the other stores, so every route bundle shares one copy.
+const g = globalThis as unknown as { __nightDeskRules?: HouseRules };
+export const houseRules: HouseRules = (g.__nightDeskRules ??= { ...defaultRules, ...loadOne<HouseRules>("rules", "house") });
+
+export function setRules(next: Partial<HouseRules>): HouseRules {
+  for (const [key, [min, max]] of Object.entries(ruleBounds) as [keyof HouseRules, [number, number]][]) {
+    const v = next[key];
+    if (v === undefined) continue;
+    if (!Number.isFinite(v) || v < min || v > max) throw new RangeError(`${key} must be between ${min} and ${max}.`);
+    houseRules[key] = key === "lateAfterDays" ? Math.round(v) : v;
+  }
+  save("rules", "house", houseRules);
+  return houseRules;
+}
 
 // Fixed demo rate for gate checks on JPY amounts (matches what the sandbox returned on 2026-10-29).
 const JPY_TO_USD = 0.00616;

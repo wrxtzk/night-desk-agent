@@ -1,7 +1,9 @@
+import { load, save } from "./db";
 import type { Currency } from "./paypal";
+import { ensureSeeded } from "./seed";
 
 // The shop's own record of each PayPal order: who it belongs to (the chat session), whether it is paid,
-// where the parcel is, and what has been refunded. In memory for now, like the ledger.
+// where the parcel is, and what has been refunded. Stored in SQLite; call saveOrder after changing one.
 
 export type CarrierStatus = "accepted" | "in_transit" | "arrived" | "out_for_delivery" | "delivered";
 
@@ -25,29 +27,45 @@ export type ShopOrder = {
   tracking?: { number: string; carrier: string; attachedToPayPal: boolean };
   events: CarrierEvent[];
   refunds: { id: string; amount: number; at: string }[];
+  seed?: boolean;
 };
 
 const store = globalThis as unknown as { __nightDeskOrders?: Map<string, ShopOrder> };
-const orders = (store.__nightDeskOrders ??= new Map());
+function orders(): Map<string, ShopOrder> {
+  if (!store.__nightDeskOrders) {
+    ensureSeeded();
+    store.__nightDeskOrders = new Map(load<ShopOrder>("order").map((o) => [o.orderId, o]));
+  }
+  return store.__nightDeskOrders;
+}
+
+export const saveOrder = (o: ShopOrder) => save("order", o.orderId, o, o.createdAt);
 
 export function addOrder(order: Omit<ShopOrder, "createdAt" | "events" | "refunds">): ShopOrder {
   const full: ShopOrder = { ...order, createdAt: new Date().toISOString(), events: [], refunds: [] };
-  orders.set(order.orderId, full);
+  orders().set(order.orderId, full);
+  saveOrder(full);
   return full;
 }
 
-export const getOrder = (orderId: string) => orders.get(orderId);
+export const getOrder = (orderId: string) => orders().get(orderId);
 
-export const ordersForSession = (sessionId: string) => [...orders.values()].filter((o) => o.sessionId === sessionId);
+export const ordersForSession = (sessionId: string) => [...orders().values()].filter((o) => o.sessionId === sessionId);
 
 export function markPaid(orderId: string, captureId: string) {
-  const o = orders.get(orderId);
-  if (o && !o.captureId) Object.assign(o, { captureId, paidAt: new Date().toISOString() });
+  const o = orders().get(orderId);
+  if (o && !o.captureId) {
+    Object.assign(o, { captureId, paidAt: new Date().toISOString() });
+    saveOrder(o);
+  }
   return o;
 }
 
 export function addRefund(orderId: string, refund: { id: string; amount: number }) {
-  orders.get(orderId)?.refunds.push({ ...refund, at: new Date().toISOString() });
+  const o = orders().get(orderId);
+  if (!o) return;
+  o.refunds.push({ ...refund, at: new Date().toISOString() });
+  saveOrder(o);
 }
 
 export const refundedAmount = (o: ShopOrder) => o.refunds.reduce((sum, r) => sum + r.amount, 0);

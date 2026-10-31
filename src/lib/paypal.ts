@@ -173,3 +173,46 @@ export async function verifyWebhook(headers: Headers, event: unknown): Promise<b
   });
   return res.verification_status === "SUCCESS";
 }
+
+// Transaction Search (Reporting API). PayPal refreshes this data every few hours; last_refreshed_datetime
+// says how far it reaches, so the morning report only reconciles up to that moment.
+export type PayPalTransaction = { id: string; eventCode: string; at: string; currency: Currency; amount: number; fee: number; referenceId?: string };
+
+type SearchResponse = {
+  last_refreshed_datetime: string;
+  total_pages: number;
+  transaction_details: {
+    transaction_info: {
+      transaction_id: string;
+      transaction_event_code: string;
+      transaction_initiation_date: string;
+      transaction_amount: { currency_code: Currency; value: string };
+      fee_amount?: { value: string };
+      paypal_reference_id?: string;
+    };
+  }[];
+};
+
+export async function searchTransactions(start: Date, end: Date): Promise<{ through: string; transactions: PayPalTransaction[] }> {
+  const iso = (d: Date) => `${d.toISOString().slice(0, 19)}Z`;
+  const transactions: PayPalTransaction[] = [];
+  let through = "";
+  for (let page = 1, pages = 1; page <= pages; page++) {
+    const q = new URLSearchParams({ start_date: iso(start), end_date: iso(end), fields: "transaction_info", page_size: "500", page: String(page) });
+    const res = await call<SearchResponse>("GET", `/v1/reporting/transactions?${q}`);
+    through = res.last_refreshed_datetime;
+    pages = res.total_pages || 1;
+    for (const { transaction_info: t } of res.transaction_details ?? []) {
+      transactions.push({
+        id: t.transaction_id,
+        eventCode: t.transaction_event_code,
+        at: t.transaction_initiation_date,
+        currency: t.transaction_amount.currency_code,
+        amount: Number(t.transaction_amount.value),
+        fee: Math.abs(Number(t.fee_amount?.value ?? 0)),
+        referenceId: t.paypal_reference_id,
+      });
+    }
+  }
+  return { through, transactions };
+}

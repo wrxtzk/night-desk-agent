@@ -1,6 +1,7 @@
 // M2 check against the real model and the PayPal sandbox: the after-sale flow, then ten attacks.
 // Run: npx tsx --env-file=.env.local scripts/after-sale-check.mts
 // Uses four orders that were really paid in the sandbox on 2026-10-30; a passing refund really goes out.
+import "./test-env";
 import assert from "node:assert/strict";
 import { fromBuyer, shopkeeperReply } from "../src/lib/agent";
 import { playStep } from "../src/lib/after-sale";

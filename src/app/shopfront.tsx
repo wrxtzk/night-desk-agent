@@ -1,4 +1,6 @@
 "use client";
+
+import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import type { OrderView } from "@/lib/agent";
 import type { Product } from "@/lib/catalog";
@@ -278,7 +280,9 @@ function ShopNotes({ rules, idPrefix }: { rules: Rules; idPrefix: string }) {
           </div>
         </dl>
       </section>
-      <p className={s.demo}>Fictional demo shop on the PayPal sandbox. No real money moves and nothing ships.</p>
+      <p className={s.demo}>
+        Fictional demo shop on the PayPal sandbox. No real money moves and nothing ships. <Link href="/owner">See the owner&apos;s dashboard</Link>.
+      </p>
     </>
   );
 }
@@ -294,6 +298,7 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
   const [clock, setClock] = useState<{ time: string; night: boolean } | null>(null);
   const session = useRef("");
   const loaded = useRef(false);
+  const inboxSeen = useRef(0);
   const thread = useRef<HTMLDivElement>(null);
   const composer = useRef<HTMLTextAreaElement>(null);
 
@@ -301,13 +306,14 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
   useEffect(() => {
     session.current = sessionStorage.getItem(SESSION_KEY) ?? crypto.randomUUID();
     sessionStorage.setItem(SESSION_KEY, session.current);
-    let saved: { entries: Entry[]; order: Order | null } = { entries: [], order: null };
+    let saved: { entries: Entry[]; order: Order | null; inboxSeen?: number } = { entries: [], order: null };
     try {
       saved = JSON.parse(sessionStorage.getItem(THREAD_KEY) ?? "") ?? saved;
     } catch {
       // Nothing saved yet.
     }
     let { entries: restored, order: restoredOrder } = saved;
+    inboxSeen.current = saved.inboxSeen ?? 0;
     const q = new URLSearchParams(location.search);
     if (q.get("paid") === "1") {
       const captureId = q.get("capture") ?? "";
@@ -335,8 +341,31 @@ export function Shopfront({ shop, catalog, rules }: { shop: Shop; catalog: Produ
   }, []);
 
   useEffect(() => {
-    if (loaded.current) sessionStorage.setItem(THREAD_KEY, JSON.stringify({ entries, order }));
+    if (loaded.current) sessionStorage.setItem(THREAD_KEY, JSON.stringify({ entries, order, inboxSeen: inboxSeen.current }));
   }, [entries, order]);
+
+  // After a sale the shop can write first (the owner approved or declined a request): look for its messages while the tab is open.
+  const orderId = order?.orderId;
+  useEffect(() => {
+    if (!orderId) return;
+    const check = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const sid = encodeURIComponent(session.current);
+        const { messages } = (await (await fetch(`/api/inbox?sessionId=${sid}`)).json()) as { messages: { notice: string; text: string }[] };
+        const fresh = messages.slice(inboxSeen.current);
+        if (fresh.length === 0) return;
+        inboxSeen.current = messages.length;
+        setEntries((e) => [...e, ...fresh.flatMap((m) => [{ kind: "event" as const, tone: "note" as const, text: m.notice }, { kind: "shop" as const, text: m.text }])]);
+        const { order: latest } = (await (await fetch(`/api/order?sessionId=${sid}`)).json()) as { order: OrderView | null };
+        if (latest) setOrder(latest);
+      } catch {
+        // Try again on the next tick.
+      }
+    };
+    const id = setInterval(check, 10_000);
+    return () => clearInterval(id);
+  }, [orderId]);
 
   useEffect(() => {
     const tick = () => {

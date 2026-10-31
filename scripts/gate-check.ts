@@ -1,9 +1,10 @@
 // Checks the rule gate without the model: these must hold even if the agent is talked into asking.
+import "./test-env";
 import assert from "node:assert/strict";
 import { simulate } from "../src/lib/carrier";
 import { record } from "../src/lib/ledger";
 import { addOrder, addRefund, markPaid } from "../src/lib/orders";
-import { gateDiscount, gateRefund } from "../src/lib/rules";
+import { defaultRules, gateDiscount, gateRefund, setRules } from "../src/lib/rules";
 
 assert.equal(gateDiscount(495, 3300).verdict, "pass"); // 15%
 assert.equal(gateDiscount(660, 3300).verdict, "block"); // 20%
@@ -49,4 +50,12 @@ markPaid("OTHER", "CAP-OTHER");
 other.events = simulate(other, "stall");
 for (let i = 0; i < 2; i++) record({ kind: "refund", netUsd: -14, reason: "test", gate: "pass" });
 assert.equal(gateRefund(other, 3, "late").verdict, "hold"); // 28 used + 3 > 30
+
+// The owner's edits reach the gate at once, and stay within bounds.
+setRules({ maxDiscountPct: 20 });
+assert.equal(gateDiscount(660, 3300).verdict, "pass"); // 20%
+assert.throws(() => setRules({ maxDiscountPct: 50 }), RangeError);
+assert.throws(() => setRules({ dailyRefundUsd: Number.NaN }), RangeError);
+setRules(defaultRules);
+assert.equal(gateDiscount(660, 3300).verdict, "block");
 console.log("gate checks passed");

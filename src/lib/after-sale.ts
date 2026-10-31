@@ -1,6 +1,6 @@
 import { shopEvent, shopkeeperReply } from "./agent";
 import { CARRIER, PAYPAL_CARRIER, simulate, trackingNumber, type CarrierStep } from "./carrier";
-import type { ShopOrder } from "./orders";
+import { saveOrder, type ShopOrder } from "./orders";
 
 // Play one after-sale event on a paid order (the owner ships it, the simulated carrier stalls or delivers it)
 // and let the shopkeeper react to it in the buyer's conversation.
@@ -25,6 +25,7 @@ export async function playStep(order: ShopOrder, step: CarrierStep) {
     notice = `Carrier: delivered (${last.note.toLowerCase()}).`;
     event = shopEvent("carrier", `Order ${order.orderId}, ${CARRIER} ${order.tracking?.number}: ${last.note} at ${last.place}. Let the buyer know.`);
   }
+  saveOrder(order);
   const reply = await shopkeeperReply(order.sessionId, event);
   return { notice, ...reply };
 }

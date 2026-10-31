@@ -15,9 +15,13 @@ export function trackingNumber(): string {
   return `RR${digits.join("")}${c === 10 ? 0 : c === 11 ? 5 : c}KR`;
 }
 
+// A scan at about `hour` UTC, at least `days` full days ago (so "5 days without a scan" holds at any time of day).
 const daysAgo = (days: number, hour: number) => {
-  const d = new Date(Date.now() - days * 86_400_000);
-  d.setUTCHours(hour, 10 + Math.floor(Math.random() * 40), 0, 0);
+  const latest = Date.now() - days * 86_400_000;
+  const minute = 10 + Math.floor(Math.random() * 40);
+  const d = new Date(latest);
+  d.setUTCHours(hour, minute, 0, 0);
+  if (d.getTime() > latest) d.setTime(latest - minute * 60_000);
   return d.toISOString();
 };
 

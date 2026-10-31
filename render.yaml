@@ -20,3 +20,6 @@ services:
         sync: false
       - key: APP_URL
         sync: false
+      # Optional: owner actions (approve refunds, edit rules, adopt a suggestion) then need this key.
+      - key: OWNER_KEY
+        sync: false

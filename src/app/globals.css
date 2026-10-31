@@ -13,6 +13,12 @@
   --refund: #1f5fbf;
   --pass: #3a8a3a;
   --on-ink: #fafaf7;
+  --on-ink-muted: #c9c9cc;
+  --on-ink-line: #4a4a50;
+  --on-ink-error: #ffb4a8;
+  --pass-bg: #f1f2ec;
+  --selected: #fcfde6;
+  --paypal-blue: #003087;
   --radius: 10px;
   --radius-control: 8px;
   --font: var(--font-grotesk), var(--font-jp), "Pretendard", "Noto Sans KR", system-ui, sans-serif;

@@ -44,3 +44,4 @@ next-env.d.ts
 
 # design tooling output
 .taste-skill/
+.data/

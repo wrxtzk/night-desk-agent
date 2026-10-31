@@ -12,11 +12,14 @@ export async function GET(req: Request) {
   if (!orderId) return NextResponse.redirect(`${env.appUrl()}/?paid=0`);
   try {
     const cap = await captureOrder(orderId);
-    markPaid(orderId, cap.captureId);
+    const order = markPaid(orderId, cap.captureId);
     if (!hasEntry("sale", cap.captureId)) {
       record({
         kind: "sale",
-        buyer: cap.payerCountry,
+        // Where the buyer asked us to ship; PayPal's payer country is the sandbox account's.
+        buyer: order?.buyer ?? cap.payerCountry,
+        orderId,
+        items: order?.lines.map((l) => l.name),
         currency: cap.currency,
         amount: cap.gross,
         fee: cap.fee,
