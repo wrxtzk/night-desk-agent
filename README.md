@@ -12,8 +12,8 @@ Status (Nov 10, 2026): buyer page, PayPal checkout, the after-sale flow and the 
 Live demo: **https://night-desk-s91u.onrender.com**. It runs on a free instance, so the first page can take about a minute to wake up. Everything is on the PayPal sandbox; no real money moves and nothing ships. Munbang Stationery is a fictional demo shop.
 
 Sandbox buyer account for checkout:
-- Email: `<JUDGE_SANDBOX_EMAIL>`
-- Password: `<JUDGE_SANDBOX_PASSWORD>`
+- Email: `sb-jsnjg53814592@personal.example.com`
+- Password: `3c?a=TXq`
 
 1. Open the shop and ask for something, in English or Japanese: "How much is the fountain pen and ink set, delivered to San Francisco?" Ask for 20% off and watch it stop at 15%.
 2. Ask it to make the order, then pay with the sandbox account above. PayPal sends you back and the payment is captured.
