@@ -382,6 +382,7 @@ function Reconciled({ recon }: { recon: DashboardData["reconciliation"] }) {
         </svg>
         <span>
           Matches PayPal&apos;s records: {recon.checked} of {recon.checked} payments and refunds, through {through}.
+          {recon.newer ? ` ${recon.newer} newer ${recon.newer === 1 ? "one is" : "are"} not in PayPal's records yet.` : ""}
         </span>
       </p>
     );

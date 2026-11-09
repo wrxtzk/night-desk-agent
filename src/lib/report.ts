@@ -65,7 +65,7 @@ const round = (n: number) => Math.round(n * 100) / 100;
 
 // Reconciliation: every capture and refund PayPal recorded in the window must be in the ledger with the same
 // amount, and every sale or refund in the ledger must be in PayPal, up to the time PayPal's data reaches.
-export type Reconciliation = { through: string; checked: number; missingInLedger: string[]; missingInPayPal: string[]; mismatched: string[]; pending?: boolean; error?: string };
+export type Reconciliation = { through: string; checked: number; missingInLedger: string[]; missingInPayPal: string[]; mismatched: string[]; newer?: number; pending?: boolean; error?: string };
 
 const g = globalThis as unknown as { __nightDeskRecon?: Map<string, { at: number; value: Reconciliation }> };
 const cache = (g.__nightDeskRecon ??= new Map());
@@ -92,7 +92,9 @@ export async function reconcile(window: { start: string; end: string }, entries 
     }
     const seen = new Set(paypal.map((t) => t.id));
     const missingInPayPal = ledger.filter((e) => !seen.has(e.paypalId ?? "")).map((e) => e.paypalId ?? e.id);
-    value = { through: cutoff, checked: paypal.length, missingInLedger, missingInPayPal, mismatched };
+    // Sales and refunds after the cutoff can't be checked yet; say so instead of claiming the whole day matches.
+    const newer = entries.filter((e) => (e.kind === "sale" || e.kind === "refund") && e.at >= cutoff && e.at < window.end).length;
+    value = { through: cutoff, checked: paypal.length, missingInLedger, missingInPayPal, mismatched, newer, pending: paypal.length === 0 && ledger.length === 0 && newer > 0 };
   } catch (err) {
     // PayPal answers 404 when its records don't reach the window's start yet (they refresh every few hours).
     const pending = err instanceof PayPalError && err.status === 404;

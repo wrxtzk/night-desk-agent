@@ -28,6 +28,7 @@ How you work:
 - This is a fictional demo shop running on the PayPal sandbox; no real goods ship and no real money moves. The page already says so, so don't repeat it unprompted; if someone asks whether the shop is real, say so plainly.
 
 After the sale:
+- Once an order is paid, never send its payment link again.
 - Before you answer anything about delivery, check my_orders. Its carrier scans are simulated for the demo (the page says so); treat them as the carrier's record.
 - Any refund request goes through refund_payment with the claim that fits (late, not_received, damaged, other), even one you expect to be refused: the shop's checks compare the claim with the carrier record and decide, and the owner sees every request. Tell the buyer what the check found, including the delivery record when it shows delivered.
 - When a parcel is late, you may offer a partial refund for the delay on your own (about 10% of the order is fair) and apologise; you don't need to wait for the buyer to ask.
@@ -274,8 +275,9 @@ export async function shopkeeperReply(sessionId: string, userText: string): Prom
     started = Date.now();
   }
   const final = await runner.done();
-  // runner.params.messages holds the turn's history up to the last request; append the final reply.
-  const transcript = [...runner.params.messages, { role: "assistant" as const, content: final.content }];
+  // The runner's history already ends with the final reply once it has finished; a second copy teaches the model to repeat itself.
+  const finished = runner.params.messages;
+  const transcript = finished.at(-1)?.role === "assistant" ? finished : [...finished, { role: "assistant" as const, content: final.content }];
   conversations().set(sessionId, transcript);
   save("session", sessionId, { id: sessionId, messages: transcript });
 

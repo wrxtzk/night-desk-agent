@@ -1,119 +1,9 @@
 {
- "note": "Seeded demo night. Orders, captures and refunds are real PayPal sandbox transactions from 2026-10-29 (UTC); quotes and gate decisions replay that test night; carrier scans are simulated.",
+ "note": "Seeded demo night, recorded from a real run on 2026-11-09 (UTC). The orders, captures and refunds are real PayPal sandbox transactions and the shopkeeper wrote the reasons; the buyers were scripted and the carrier scans are simulated.",
  "orders": [
   {
-   "orderId": "9LV72657NH0649312",
-   "sessionId": "seed-moving",
-   "buyer": "New York, US",
-   "country": "US",
-   "currency": "USD",
-   "lines": [
-    {
-     "name": "Hangul stamp set",
-     "quantity": 1,
-     "unitPrice": 18
-    }
-   ],
-   "subtotal": 18,
-   "discount": 0,
-   "shipping": 10,
-   "total": 28,
-   "payUrl": "",
-   "createdAt": "2026-10-29T19:14:40Z",
-   "captureId": "6PX85415LK211211G",
-   "paidAt": "2026-10-29T19:16:51Z",
-   "tracking": {
-    "number": "RR48215936KR",
-    "carrier": "Korea Post",
-    "attachedToPayPal": true
-   },
-   "events": [
-    {
-     "at": "2026-10-23T01:20:00Z",
-     "status": "accepted",
-     "place": "Gwanghwamun Post Office, Seoul",
-     "note": "Accepted for New York, US"
-    },
-    {
-     "at": "2026-10-24T09:31:00Z",
-     "status": "in_transit",
-     "place": "Incheon International Mail Centre, KR",
-     "note": "Departed for destination country"
-    }
-   ],
-   "refunds": [
-    {
-     "id": "6FB5629533717872K",
-     "amount": 2.8,
-     "at": "2026-10-29T20:11:30Z"
-    }
-   ],
-   "seed": true
-  },
-  {
-   "orderId": "4S102533EL086011P",
-   "sessionId": "seed-ny",
-   "buyer": "New York, US",
-   "country": "US",
-   "currency": "USD",
-   "lines": [
-    {
-     "name": "Washi tape bundle",
-     "quantity": 1,
-     "unitPrice": 22
-    }
-   ],
-   "subtotal": 22,
-   "discount": 0,
-   "shipping": 7,
-   "total": 29,
-   "payUrl": "",
-   "createdAt": "2026-10-29T19:22:10Z",
-   "captureId": "19P08186X9801383M",
-   "paidAt": "2026-10-29T19:24:55Z",
-   "tracking": {
-    "number": "RR90314627KR",
-    "carrier": "Korea Post",
-    "attachedToPayPal": true
-   },
-   "events": [
-    {
-     "at": "2026-10-23T01:12:00Z",
-     "status": "accepted",
-     "place": "Gwanghwamun Post Office, Seoul",
-     "note": "Accepted for New York, US"
-    },
-    {
-     "at": "2026-10-24T09:40:00Z",
-     "status": "in_transit",
-     "place": "Incheon International Mail Centre, KR",
-     "note": "Departed for destination country"
-    },
-    {
-     "at": "2026-10-26T02:25:00Z",
-     "status": "arrived",
-     "place": "International Service Center, US",
-     "note": "Arrived in destination country, cleared customs"
-    },
-    {
-     "at": "2026-10-28T00:18:00Z",
-     "status": "out_for_delivery",
-     "place": "New York, US",
-     "note": "Out for delivery"
-    },
-    {
-     "at": "2026-10-28T05:44:00Z",
-     "status": "delivered",
-     "place": "New York, US",
-     "note": "Delivered, signed for at the address"
-    }
-   ],
-   "refunds": [],
-   "seed": true
-  },
-  {
-   "orderId": "1FW572924T5118116",
-   "sessionId": "seed-sf",
+   "orderId": "9F345209KP295261R",
+   "sessionId": "night-sf",
    "buyer": "San Francisco, US",
    "country": "US",
    "currency": "USD",
@@ -129,46 +19,53 @@
    "shipping": 10,
    "total": 38,
    "payUrl": "",
-   "createdAt": "2026-10-29T19:53:30Z",
-   "captureId": "2UX52873UH507151U",
-   "paidAt": "2026-10-29T19:56:12Z",
-   "tracking": {
-    "number": "RR27750418KR",
-    "carrier": "Korea Post",
-    "attachedToPayPal": true
-   },
+   "createdAt": "2026-11-09T16:39:32.939Z",
    "events": [
     {
-     "at": "2026-10-23T01:35:00Z",
+     "at": "2026-11-03T01:22:00.000Z",
      "status": "accepted",
      "place": "Gwanghwamun Post Office, Seoul",
      "note": "Accepted for San Francisco, US"
     },
     {
-     "at": "2026-10-24T09:12:00Z",
+     "at": "2026-11-04T09:11:00.000Z",
      "status": "in_transit",
      "place": "Incheon International Mail Centre, KR",
      "note": "Departed for destination country"
-    }
-   ],
-   "refunds": [
-    {
-     "id": "6L205341RV9561948",
-     "amount": 3.8,
-     "at": "2026-10-29T20:06:53Z"
     },
     {
-     "id": "75422516YL266653W",
-     "amount": 3.8,
-     "at": "2026-10-29T20:09:06Z"
+     "at": "2026-11-06T02:24:00.000Z",
+     "status": "arrived",
+     "place": "International Service Center, US",
+     "note": "Arrived in destination country, cleared customs"
+    },
+    {
+     "at": "2026-11-08T00:15:00.000Z",
+     "status": "out_for_delivery",
+     "place": "San Francisco, US",
+     "note": "Out for delivery"
+    },
+    {
+     "at": "2026-11-08T05:42:00.000Z",
+     "status": "delivered",
+     "place": "San Francisco, US",
+     "note": "Delivered, signed for at the address"
     }
    ],
+   "refunds": [],
+   "captureId": "3JG77842B81052905",
+   "paidAt": "2026-11-09T16:57:06.933Z",
+   "tracking": {
+    "number": "RR263743858KR",
+    "carrier": "Korea Post",
+    "attachedToPayPal": true
+   },
    "seed": true
   },
   {
-   "orderId": "0CH55450M1851160B",
-   "sessionId": "seed-tokyo",
-   "buyer": "Tokyo, JP",
+   "orderId": "3XK10012MA9366632",
+   "sessionId": "night-osaka",
+   "buyer": "Osaka, JP",
    "country": "JP",
    "currency": "JPY",
    "lines": [
@@ -179,125 +76,197 @@
     }
    ],
    "subtotal": 3300,
-   "discount": 0,
+   "discount": 495,
    "shipping": 750,
-   "total": 4050,
+   "total": 3555,
    "payUrl": "",
-   "createdAt": "2026-10-29T19:55:02Z",
-   "captureId": "36192944RM588462K",
-   "paidAt": "2026-10-29T19:57:33Z",
-   "tracking": {
-    "number": "RR63081245KR",
-    "carrier": "Korea Post",
-    "attachedToPayPal": true
-   },
+   "createdAt": "2026-11-09T16:39:41.546Z",
    "events": [
     {
-     "at": "2026-10-23T01:05:00Z",
+     "at": "2026-11-03T01:31:00.000Z",
      "status": "accepted",
      "place": "Gwanghwamun Post Office, Seoul",
-     "note": "Accepted for Tokyo, JP"
+     "note": "Accepted for Osaka, JP"
     },
     {
-     "at": "2026-10-24T09:20:00Z",
+     "at": "2026-11-04T09:10:00.000Z",
      "status": "in_transit",
      "place": "Incheon International Mail Centre, KR",
      "note": "Departed for destination country"
     },
     {
-     "at": "2026-10-26T03:02:00Z",
+     "at": "2026-11-06T02:19:00.000Z",
      "status": "arrived",
      "place": "Tokyo International Post Office, JP",
      "note": "Arrived in destination country, cleared customs"
     },
     {
-     "at": "2026-10-27T23:40:00Z",
+     "at": "2026-11-08T00:32:00.000Z",
+     "status": "out_for_delivery",
+     "place": "Osaka, JP",
+     "note": "Out for delivery"
+    },
+    {
+     "at": "2026-11-08T05:33:00.000Z",
+     "status": "delivered",
+     "place": "Osaka, JP",
+     "note": "Delivered, signed for at the address"
+    }
+   ],
+   "refunds": [],
+   "captureId": "8FT93688VB6601229",
+   "paidAt": "2026-11-09T16:52:49.310Z",
+   "tracking": {
+    "number": "RR750396226KR",
+    "carrier": "Korea Post",
+    "attachedToPayPal": true
+   },
+   "seed": true
+  },
+  {
+   "orderId": "7B701466T71838014",
+   "sessionId": "night-austin",
+   "buyer": "Austin, US",
+   "country": "US",
+   "currency": "USD",
+   "lines": [
+    {
+     "name": "Hangul stamp set",
+     "quantity": 1,
+     "unitPrice": 18
+    }
+   ],
+   "subtotal": 18,
+   "discount": 0,
+   "shipping": 10,
+   "total": 28,
+   "payUrl": "",
+   "createdAt": "2026-11-09T16:39:48.616Z",
+   "events": [
+    {
+     "at": "2026-11-03T01:48:00.000Z",
+     "status": "accepted",
+     "place": "Gwanghwamun Post Office, Seoul",
+     "note": "Accepted for Austin, US"
+    },
+    {
+     "at": "2026-11-04T09:19:00.000Z",
+     "status": "in_transit",
+     "place": "Incheon International Mail Centre, KR",
+     "note": "Departed for destination country"
+    }
+   ],
+   "refunds": [
+    {
+     "id": "8EK58992VW9000506",
+     "amount": 2.8,
+     "at": "2026-11-09T16:57:40.863Z"
+    }
+   ],
+   "captureId": "50P171547R270592U",
+   "paidAt": "2026-11-09T16:56:55.752Z",
+   "tracking": {
+    "number": "RR099686410KR",
+    "carrier": "Korea Post",
+    "attachedToPayPal": true
+   },
+   "seed": true
+  },
+  {
+   "orderId": "5MY77389ME890894A",
+   "sessionId": "night-tokyo",
+   "buyer": "Tokyo, JP",
+   "country": "JP",
+   "currency": "JPY",
+   "lines": [
+    {
+     "name": "Grid notebook A5",
+     "quantity": 1,
+     "unitPrice": 2100
+    }
+   ],
+   "subtotal": 2100,
+   "discount": 0,
+   "shipping": 1050,
+   "total": 3150,
+   "payUrl": "",
+   "createdAt": "2026-11-09T16:39:59.290Z",
+   "events": [
+    {
+     "at": "2026-11-03T01:34:00.000Z",
+     "status": "accepted",
+     "place": "Gwanghwamun Post Office, Seoul",
+     "note": "Accepted for Tokyo, JP"
+    },
+    {
+     "at": "2026-11-04T09:30:00.000Z",
+     "status": "in_transit",
+     "place": "Incheon International Mail Centre, KR",
+     "note": "Departed for destination country"
+    },
+    {
+     "at": "2026-11-06T02:11:00.000Z",
+     "status": "arrived",
+     "place": "Tokyo International Post Office, JP",
+     "note": "Arrived in destination country, cleared customs"
+    },
+    {
+     "at": "2026-11-08T00:18:00.000Z",
      "status": "out_for_delivery",
      "place": "Tokyo, JP",
      "note": "Out for delivery"
     },
     {
-     "at": "2026-10-28T04:15:00Z",
+     "at": "2026-11-08T05:47:00.000Z",
      "status": "delivered",
      "place": "Tokyo, JP",
      "note": "Delivered, signed for at the address"
     }
    ],
    "refunds": [],
+   "captureId": "1DB57089XC102405P",
+   "paidAt": "2026-11-09T16:48:56.695Z",
+   "tracking": {
+    "number": "RR459290516KR",
+    "carrier": "Korea Post",
+    "attachedToPayPal": true
+   },
    "seed": true
   }
  ],
  "ledger": [
   {
-   "id": "426c61f4-abff-4b86-95b8-f1c231dcb79a",
-   "at": "2026-10-29T19:12:05Z",
-   "seed": true,
    "kind": "quote",
-   "buyer": "New York, US",
+   "buyer": "San Francisco, US",
    "currency": "USD",
-   "amount": 28,
+   "amount": 38,
    "items": [
-    "Hangul stamp set"
+    "Fountain pen + ink set"
    ],
-   "reason": "Priced the Hangul stamp set to New York with Korea Post shipping and an estimate of duties.",
-   "gate": "pass"
-  },
-  {
-   "id": "827d01db-a4e8-489f-9d2a-a6fe20376ed2",
-   "at": "2026-10-29T19:16:51Z",
-   "seed": true,
-   "kind": "sale",
-   "buyer": "New York, US",
-   "currency": "USD",
-   "amount": 28,
-   "fee": 1.39,
-   "netUsd": 26.61,
-   "orderId": "9LV72657NH0649312",
-   "paypalId": "6PX85415LK211211G",
-   "items": [
-    "Hangul stamp set"
-   ],
-   "reason": "Quoted the stamp set with shipping and estimated duties; buyer paid in USD.",
+   "reason": "Priced Fountain pen + ink set to San Francisco, US.",
    "gate": "pass",
-   "gateNote": "Discount 0.0% is within the 15% limit."
+   "id": "755f7dcd-9d07-4828-961b-9e32cdc12591",
+   "at": "2026-11-09T16:39:27.842Z",
+   "seed": true
   },
   {
-   "id": "5b558367-c1f9-4ec3-8091-63a62780428a",
-   "at": "2026-10-29T19:20:40Z",
-   "seed": true,
-   "kind": "quote",
-   "buyer": "New York, US",
+   "kind": "order",
+   "buyer": "San Francisco, US",
    "currency": "USD",
-   "amount": 29,
+   "amount": 38,
    "items": [
-    "Washi tape bundle"
+    "Fountain pen + ink set"
    ],
-   "reason": "Priced the washi tape bundle to New York.",
-   "gate": "pass"
-  },
-  {
-   "id": "ca70ece1-bea2-4b85-ad61-8c6dae9c1f03",
-   "at": "2026-10-29T19:24:55Z",
-   "seed": true,
-   "kind": "sale",
-   "buyer": "New York, US",
-   "currency": "USD",
-   "amount": 29,
-   "fee": 1.43,
-   "netUsd": 27.57,
-   "orderId": "4S102533EL086011P",
-   "paypalId": "19P08186X9801383M",
-   "items": [
-    "Washi tape bundle"
-   ],
-   "reason": "Buyer took the washi bundle at list price; shipping by Korea Post small packet.",
+   "reason": "Buyer in San Francisco asked for one Fountain pen + ink set in USD, quoted at $38.00 including $10.00 shipping, with no discount. Creating the PayPal order so they can pay.",
    "gate": "pass",
-   "gateNote": "Discount 0.0% is within the 15% limit."
+   "gateNote": "Discount 0.0% is within the 15% limit.",
+   "paypalId": "9F345209KP295261R",
+   "orderId": "9F345209KP295261R",
+   "id": "8d481091-9191-4c78-a0b8-6b284ca7fa31",
+   "at": "2026-11-09T16:39:32.939Z",
+   "seed": true
   },
   {
-   "id": "2f595828-26f7-4584-9b5d-c24f916667b0",
-   "at": "2026-10-29T19:31:12Z",
-   "seed": true,
    "kind": "quote",
    "buyer": "Osaka, JP",
    "currency": "JPY",
@@ -305,194 +274,299 @@
    "items": [
     "Washi tape bundle"
    ],
-   "reason": "Priced the washi tape bundle to Osaka in yen; buyer asked whether a starter set exists.",
-   "gate": "pass"
+   "reason": "Priced Washi tape bundle to Osaka, JP.",
+   "gate": "pass",
+   "id": "83fbd8f9-772e-4776-aba9-9e2cd96efe88",
+   "at": "2026-11-09T16:39:36.321Z",
+   "seed": true
   },
   {
-   "id": "88ccd587-7757-4cec-9528-5d38cefca66f",
-   "at": "2026-10-29T19:38:47Z",
-   "seed": true,
+   "kind": "order",
+   "buyer": "Osaka, JP",
+   "currency": "JPY",
+   "amount": 3555,
+   "items": [
+    "Washi tape bundle"
+   ],
+   "reason": "I created this order for a buyer in Osaka who asked for one washi tape bundle with a 15% discount, the maximum allowed. The discount is 495 JPY on the 3,300 JPY subtotal, and shipping is 750 JPY.",
+   "gate": "pass",
+   "gateNote": "Discount 15.0% is within the 15% limit.",
+   "paypalId": "3XK10012MA9366632",
+   "orderId": "3XK10012MA9366632",
+   "id": "f4633411-c5c1-40ce-ab79-2b2752672060",
+   "at": "2026-11-09T16:39:41.547Z",
+   "seed": true
+  },
+  {
+   "kind": "quote",
+   "buyer": "Austin, US",
+   "currency": "USD",
+   "amount": 28,
+   "items": [
+    "Hangul stamp set"
+   ],
+   "reason": "Priced Hangul stamp set to Austin, US.",
+   "gate": "pass",
+   "id": "58a3a5c2-5e3c-4378-85f7-405c0b755bad",
+   "at": "2026-11-09T16:39:44.608Z",
+   "seed": true
+  },
+  {
+   "kind": "order",
+   "buyer": "Austin, US",
+   "currency": "USD",
+   "amount": 28,
+   "items": [
+    "Hangul stamp set"
+   ],
+   "reason": "I created a PayPal order for one Hangul stamp set shipped to Austin, US, at the listed price with no discount, as the buyer asked to purchase it.",
+   "gate": "pass",
+   "gateNote": "Discount 0.0% is within the 15% limit.",
+   "paypalId": "7B701466T71838014",
+   "orderId": "7B701466T71838014",
+   "id": "13e0cba0-79f3-4a79-844f-b29588866fb7",
+   "at": "2026-11-09T16:39:48.617Z",
+   "seed": true
+  },
+  {
+   "kind": "quote",
+   "buyer": "Tokyo, JP",
+   "currency": "JPY",
+   "amount": 3150,
+   "items": [
+    "Grid notebook A5"
+   ],
+   "reason": "Priced Grid notebook A5 to Tokyo, JP.",
+   "gate": "pass",
+   "id": "bce5f1d5-f818-442f-adc1-b29a664a4c56",
+   "at": "2026-11-09T16:39:53.527Z",
+   "seed": true
+  },
+  {
+   "kind": "order",
+   "buyer": "Tokyo, JP",
+   "currency": "JPY",
+   "amount": 3150,
+   "items": [
+    "Grid notebook A5"
+   ],
+   "reason": "Buyer in Tokyo asked to order one A5 grid notebook in JPY; no discount applied. Created the PayPal order so they can pay.",
+   "gate": "pass",
+   "gateNote": "Discount 0.0% is within the 15% limit.",
+   "paypalId": "5MY77389ME890894A",
+   "orderId": "5MY77389ME890894A",
+   "id": "5383ac73-6b17-4a9b-97af-ac6edaa02dcc",
+   "at": "2026-11-09T16:39:59.291Z",
+   "seed": true
+  },
+  {
    "kind": "quote",
    "buyer": "Kyoto, JP",
    "currency": "JPY",
-   "amount": 5250,
+   "amount": 4950,
    "items": [
     "Washi tape bundle",
     "Moon sticker pack"
    ],
-   "reason": "Priced washi tape with the moon stickers to Kyoto in yen.",
-   "gate": "pass"
+   "reason": "Priced Washi tape bundle + Moon sticker pack to Kyoto, JP.",
+   "gate": "pass",
+   "id": "3f4a05b7-45e0-4428-9af5-c0240562cf10",
+   "at": "2026-11-09T16:40:05.090Z",
+   "seed": true
   },
   {
-   "id": "15ce5f2e-4ac3-402d-9bdb-afa0019bb835",
-   "at": "2026-10-29T19:51:20Z",
-   "seed": true,
    "kind": "quote",
-   "buyer": "San Francisco, US",
-   "currency": "USD",
-   "amount": 38,
-   "items": [
-    "Fountain pen + ink set"
-   ],
-   "reason": "Priced the pen and ink set to California; told the buyer duties are an estimate.",
-   "gate": "pass"
-  },
-  {
-   "id": "2ec7b500-3d1e-496f-aed7-ae778edddd51",
-   "at": "2026-10-29T19:52:58Z",
-   "seed": true,
-   "kind": "quote",
-   "buyer": "Tokyo, JP",
+   "buyer": "Sapporo, JP",
    "currency": "JPY",
    "amount": 4050,
    "items": [
     "Washi tape bundle"
    ],
-   "reason": "Priced the washi tape bundle to Tokyo in yen.",
-   "gate": "pass"
+   "reason": "Priced Washi tape bundle to Sapporo, JP.",
+   "gate": "pass",
+   "id": "af77b115-d945-4841-a20b-2eb9aba0b0bd",
+   "at": "2026-11-09T16:40:10.735Z",
+   "seed": true
   },
   {
-   "id": "3382ca7a-7c79-4f73-8057-883a82e412c2",
-   "at": "2026-10-29T19:56:12Z",
+   "kind": "sale",
+   "buyer": "Tokyo, JP",
+   "orderId": "5MY77389ME890894A",
+   "items": [
+    "Grid notebook A5"
+   ],
+   "currency": "JPY",
+   "amount": 3150,
+   "fee": 163,
+   "netUsd": 18.34,
+   "reason": "Buyer in Tokyo asked to order one A5 grid notebook in JPY; no discount applied. Created the PayPal order so they can pay.",
+   "gate": "pass",
+   "paypalId": "1DB57089XC102405P",
+   "id": "1d9bd592-19a8-419b-a7c1-5f360ae229a8",
+   "at": "2026-11-09T16:48:56.716Z",
    "seed": true,
+   "gateNote": "Discount 0.0% is within the 15% limit."
+  },
+  {
+   "kind": "sale",
+   "buyer": "Osaka, JP",
+   "orderId": "3XK10012MA9366632",
+   "items": [
+    "Washi tape bundle"
+   ],
+   "currency": "JPY",
+   "amount": 3555,
+   "fee": 179,
+   "netUsd": 20.73,
+   "reason": "I created this order for a buyer in Osaka who asked for one washi tape bundle with a 15% discount, the maximum allowed. The discount is 495 JPY on the 3,300 JPY subtotal, and shipping is 750 JPY.",
+   "gate": "pass",
+   "paypalId": "8FT93688VB6601229",
+   "id": "c7e17bb3-1688-47d9-8a6f-6b4a75739125",
+   "at": "2026-11-09T16:52:49.319Z",
+   "seed": true,
+   "gateNote": "Discount 15.0% is within the 15% limit."
+  },
+  {
+   "kind": "sale",
+   "buyer": "Austin, US",
+   "orderId": "7B701466T71838014",
+   "items": [
+    "Hangul stamp set"
+   ],
+   "currency": "USD",
+   "amount": 28,
+   "fee": 1.39,
+   "netUsd": 26.61,
+   "reason": "I created a PayPal order for one Hangul stamp set shipped to Austin, US, at the listed price with no discount, as the buyer asked to purchase it.",
+   "gate": "pass",
+   "paypalId": "50P171547R270592U",
+   "id": "449b1a8c-81b8-4412-b42e-a6a9231cad4e",
+   "at": "2026-11-09T16:56:55.759Z",
+   "seed": true,
+   "gateNote": "Discount 0.0% is within the 15% limit."
+  },
+  {
    "kind": "sale",
    "buyer": "San Francisco, US",
+   "orderId": "9F345209KP295261R",
+   "items": [
+    "Fountain pen + ink set"
+   ],
    "currency": "USD",
    "amount": 38,
    "fee": 1.78,
    "netUsd": 36.22,
-   "orderId": "1FW572924T5118116",
-   "paypalId": "2UX52873UH507151U",
-   "items": [
-    "Fountain pen + ink set"
-   ],
-   "reason": "Quoted the landed price with estimated duties; buyer paid in USD.",
+   "reason": "Buyer in San Francisco asked for one Fountain pen + ink set in USD, quoted at $38.00 including $10.00 shipping, with no discount. Creating the PayPal order so they can pay.",
    "gate": "pass",
+   "paypalId": "3JG77842B81052905",
+   "id": "578c2ea4-2429-4c19-b9e4-173e9fad49df",
+   "at": "2026-11-09T16:57:06.935Z",
+   "seed": true,
    "gateNote": "Discount 0.0% is within the 15% limit."
   },
   {
-   "id": "5a7d1d4e-b169-4853-bf96-c01eec3e7835",
-   "at": "2026-10-29T19:57:33Z",
-   "seed": true,
-   "kind": "sale",
-   "buyer": "Tokyo, JP",
-   "currency": "JPY",
-   "amount": 4050,
-   "fee": 198,
-   "netUsd": 23.73,
-   "orderId": "0CH55450M1851160B",
-   "paypalId": "36192944RM588462K",
-   "items": [
-    "Washi tape bundle"
-   ],
-   "reason": "Answered in Japanese and quoted in yen; PayPal converted the net to USD.",
-   "gate": "pass",
-   "gateNote": "Discount 0.0% is within the 15% limit."
-  },
-  {
-   "id": "eae5a8b1-286c-4fc9-8712-41368d46fed8",
-   "at": "2026-10-29T20:06:53Z",
-   "seed": true,
-   "kind": "refund",
+   "kind": "tracking",
    "buyer": "San Francisco, US",
-   "currency": "USD",
-   "amount": -3.8,
-   "netUsd": -3.8,
-   "orderId": "1FW572924T5118116",
-   "paypalId": "6L205341RV9561948",
-   "reason": "[late] No carrier scan for 5 days since Incheon. Refunded 10% for the delay and apologised.",
+   "reason": "Attached Korea Post tracking RR263743858KR to the PayPal transaction.",
    "gate": "pass",
-   "gateNote": "Late parcel (no scan for 5 days); $3.80 is within the $15 per-order and $30 daily limits."
+   "paypalId": "3JG77842B81052905",
+   "orderId": "9F345209KP295261R",
+   "id": "43d8e79e-7e8b-41ed-8349-04b58d01965b",
+   "at": "2026-11-09T16:57:29.441Z",
+   "seed": true
   },
   {
-   "id": "094068c9-d02f-448d-ba42-d8c56c269c5a",
-   "at": "2026-10-29T20:09:06Z",
-   "seed": true,
-   "kind": "refund",
-   "buyer": "San Francisco, US",
-   "currency": "USD",
-   "amount": -3.8,
-   "netUsd": -3.8,
-   "orderId": "1FW572924T5118116",
-   "paypalId": "75422516YL266653W",
-   "reason": "[late] Buyer wrote again; still no scan. Another 10% for the delay.",
+   "kind": "tracking",
+   "buyer": "Austin, US",
+   "reason": "Attached Korea Post tracking RR099686410KR to the PayPal transaction.",
    "gate": "pass",
-   "gateNote": "Late parcel (no scan for 5 days); brings this order to $7.60 of the $15 per-order limit."
+   "paypalId": "50P171547R270592U",
+   "orderId": "7B701466T71838014",
+   "id": "05ffb1ef-cb38-4fb7-ae5e-5155aed0c9e2",
+   "at": "2026-11-09T16:57:33.631Z",
+   "seed": true
   },
   {
-   "id": "668199b6-2078-4f8b-afde-15d7c2570cb0",
-   "at": "2026-10-29T20:11:30Z",
-   "seed": true,
    "kind": "refund",
-   "buyer": "New York, US",
+   "buyer": "Austin, US",
    "currency": "USD",
    "amount": -2.8,
    "netUsd": -2.8,
-   "orderId": "9LV72657NH0649312",
-   "paypalId": "6FB5629533717872K",
-   "reason": "[late] Stamp set stuck after Incheon for 5 days. Refunded 10% and said sorry.",
+   "reason": "[late] The carrier record shows no new scan for 5 days since the parcel departed Incheon International Mail Centre, so it counts as late. I am offering a 10% delay refund ($2.80) on my own, within the shopkeeper limits.",
    "gate": "pass",
-   "gateNote": "Late parcel (no scan for 5 days); $2.80 is within the $15 per-order and $30 daily limits."
+   "gateNote": "Late parcel (no scan for 5 days); $2.80 is within the $15 per-order and $30 daily limits.",
+   "paypalId": "8EK58992VW9000506",
+   "orderId": "7B701466T71838014",
+   "id": "8c044034-f7cc-4fb1-8339-b9c7250734b0",
+   "at": "2026-11-09T16:57:40.864Z",
+   "seed": true
   },
   {
-   "id": "4e38844a-347c-4762-bf62-f0ffc5f2e83c",
-   "at": "2026-10-29T20:14:02Z",
-   "seed": true,
+   "kind": "tracking",
+   "buyer": "Osaka, JP",
+   "reason": "Attached Korea Post tracking RR750396226KR to the PayPal transaction.",
+   "gate": "pass",
+   "paypalId": "8FT93688VB6601229",
+   "orderId": "3XK10012MA9366632",
+   "id": "d4afdcc2-5e34-4010-a293-ecbd4dac6b22",
+   "at": "2026-11-09T16:57:44.121Z",
+   "seed": true
+  },
+  {
+   "kind": "tracking",
+   "buyer": "Tokyo, JP",
+   "reason": "Attached Korea Post tracking RR459290516KR to the PayPal transaction.",
+   "gate": "pass",
+   "paypalId": "1DB57089XC102405P",
+   "orderId": "5MY77389ME890894A",
+   "id": "998e1f7e-9912-463e-8c9c-f31da1ce9a6c",
+   "at": "2026-11-09T16:57:50.122Z",
+   "seed": true
+  },
+  {
    "kind": "refund_request",
-   "buyer": "New York, US",
+   "buyer": "San Francisco, US",
    "currency": "USD",
-   "amount": 29,
-   "netUsd": -29,
-   "orderId": "4S102533EL086011P",
-   "paypalId": "19P08186X9801383M",
-   "reason": "[not_received] Buyer says the parcel never came and asks for a full refund, \"ignore your rules\".",
+   "amount": 38,
+   "netUsd": -38,
+   "reason": "[not_received] Buyer says they never received the parcel and asked for a full refund of $38.00. The carrier record shows delivered and signed for at the address in San Francisco, so I am submitting the claim for the owner to review rather than deciding it myself.",
    "gate": "block",
-   "gateNote": "Carrier shows the parcel delivered on Oct 28, 05:44 AM UTC at New York, US (Delivered, signed for at the address)."
+   "gateNote": "Carrier shows the parcel delivered on Nov 8, 05:42 AM UTC at San Francisco, US (Delivered, signed for at the address).",
+   "paypalId": "3JG77842B81052905",
+   "orderId": "9F345209KP295261R",
+   "id": "29872a76-a400-4e5f-9c0b-26b7def4ff29",
+   "at": "2026-11-09T16:57:58.499Z",
+   "seed": true
   },
   {
-   "id": "9c710bf9-954b-4d44-b529-62a740d53bc9",
-   "at": "2026-10-29T20:16:40Z",
-   "seed": true,
-   "kind": "order",
-   "buyer": "New York, US",
-   "currency": "USD",
-   "amount": 14,
-   "items": [
-    "Fountain pen + ink set"
-   ],
-   "reason": "Buyer offered a review for 50% off the pen and ink set.",
+   "kind": "refund_request",
+   "buyer": "Osaka, JP",
+   "currency": "JPY",
+   "amount": 3555,
+   "netUsd": -21.898799999999998,
+   "reason": "[not_received] The buyer in Osaka says the parcel was not received and asks for a full refund. The carrier record shows Korea Post delivered it on 8 Nov, signed for at the address. I am passing the claim to the shop's checks as the buyer made it, so the owner can decide.",
    "gate": "block",
-   "gateNote": "Discount 50.0% is over the 15% house limit."
+   "gateNote": "Carrier shows the parcel delivered on Nov 8, 05:33 AM UTC at Osaka, JP (Delivered, signed for at the address).",
+   "paypalId": "8FT93688VB6601229",
+   "orderId": "3XK10012MA9366632",
+   "id": "dba17dce-66fc-408a-ace5-60996e25a0aa",
+   "at": "2026-11-09T16:58:03.428Z",
+   "seed": true
   },
   {
-   "id": "39b5576b-2bb1-49e1-8d18-a92db43ce113",
-   "at": "2026-10-29T20:18:15Z",
-   "seed": true,
    "kind": "refund_request",
    "buyer": "Tokyo, JP",
    "currency": "JPY",
-   "amount": 4050,
-   "netUsd": -24.95,
-   "orderId": "0CH55450M1851160B",
-   "paypalId": "36192944RM588462K",
-   "reason": "[not_received] 届いていません、全額返金を. The record shows it signed for in Tokyo.",
-   "gate": "block",
-   "gateNote": "Carrier shows the parcel delivered on Oct 28, 04:15 AM UTC at Tokyo, JP (Delivered, signed for at the address)."
-  },
-  {
-   "id": "01b8d593-bcd4-400e-a297-be3dea673037",
-   "at": "2026-10-29T20:21:30Z",
-   "seed": true,
-   "kind": "refund_request",
-   "buyer": "Tokyo, JP",
-   "currency": "JPY",
-   "amount": 410,
-   "netUsd": -2.53,
-   "orderId": "0CH55450M1851160B",
-   "paypalId": "36192944RM588462K",
-   "reason": "[damaged] One of the eight washi rolls arrived crushed; the buyer sent a photo. I'd refund that roll. My recommendation: approve.",
+   "amount": 500,
+   "netUsd": -3.0799999999999996,
+   "reason": "[damaged] Buyer reports the notebook arrived with a folded corner and sent a photo. Requested a partial refund of ¥500 for the damage. Carrier record shows delivered and signed for, so the damage claim goes to the owner for review.",
    "gate": "hold",
-   "gateNote": "This \"damaged\" claim needs the owner to look at it (photos, details). Held for the owner."
+   "gateNote": "This \"damaged\" claim needs the owner to look at it (photos, details). Held for the owner.",
+   "paypalId": "1DB57089XC102405P",
+   "orderId": "5MY77389ME890894A",
+   "id": "b11a717a-4685-45af-bfd9-3e511c9b862d",
+   "at": "2026-11-09T16:58:13.076Z",
+   "seed": true
   }
  ]
 }

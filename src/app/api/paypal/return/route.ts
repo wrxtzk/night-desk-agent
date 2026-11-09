@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
-import { hasEntry, record } from "@/lib/ledger";
+import { allEntries, hasEntry, record } from "@/lib/ledger";
 import { markPaid } from "@/lib/orders";
 import { captureOrder, PayPalError } from "@/lib/paypal";
 
@@ -14,6 +14,8 @@ export async function GET(req: Request) {
     const cap = await captureOrder(orderId);
     const order = markPaid(orderId, cap.captureId);
     if (!hasEntry("sale", cap.captureId)) {
+      // The owner reads why this sale happened: the shopkeeper's reason from when it made the order.
+      const made = allEntries().find((e) => e.kind === "order" && e.orderId === orderId);
       record({
         kind: "sale",
         // Where the buyer asked us to ship; PayPal's payer country is the sandbox account's.
@@ -24,8 +26,9 @@ export async function GET(req: Request) {
         amount: cap.gross,
         fee: cap.fee,
         netUsd: cap.netUsd,
-        reason: "Buyer paid through PayPal; captured the payment.",
+        reason: made?.reason ?? "Buyer paid through PayPal; captured the payment.",
         gate: "pass",
+        gateNote: made?.gateNote,
         paypalId: cap.captureId,
       });
     }
