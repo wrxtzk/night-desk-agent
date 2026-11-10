@@ -74,13 +74,17 @@ export async function reconcile(window: { start: string; end: string }, entries 
   const key = `${window.start}|${entries.filter((e) => e.kind === "sale" || e.kind === "refund").length}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < 10 * 60_000) return hit.value;
-  const end = new Date(Math.min(Date.parse(window.end), Date.now()));
+  // A seeded night only knows the transactions it was recorded with. Whatever else this sandbox account did later that
+  // day (other test runs, orders lost when the free instance restarted) isn't part of it, so the check stops where the night does.
+  const moved = entries.filter((e) => (e.kind === "sale" || e.kind === "refund") && e.at >= window.start && e.at < window.end);
+  const seedEnd = moved.some((e) => e.seed) && moved.every((e) => e.seed || e.by === "owner") ? Date.parse(moved.filter((e) => e.seed).at(-1)!.at) + 60_000 : Infinity;
+  const end = new Date(Math.min(Date.parse(window.end), Date.now(), seedEnd));
   let value: Reconciliation;
   try {
     const { through, transactions } = await searchTransactions(new Date(window.start), end);
     const cutoff = through < end.toISOString() ? through : end.toISOString();
     // T0006: checkout payment received; T1107: payment refund. Currency conversions (T0200) are not shop events.
-    const paypal = transactions.filter((t) => t.eventCode === "T0006" || t.eventCode === "T1107");
+    const paypal = transactions.filter((t) => (t.eventCode === "T0006" || t.eventCode === "T1107") && Date.parse(t.at) < end.getTime());
     const ledger = entries.filter((e) => (e.kind === "sale" || e.kind === "refund") && e.at >= window.start && e.at < cutoff);
     const byId = new Map(ledger.map((e) => [e.paypalId, e]));
     const missingInLedger: string[] = [];
